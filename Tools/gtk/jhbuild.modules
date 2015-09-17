@@ -60,6 +60,8 @@
       href="http://gstreamer.freedesktop.org/src/"/>
   <repository type="tarball" name="savannah.gnu.org"
       href="http://download.savannah.gnu.org/releases/"/>
+  <repository type="tarball" name="savannah.gnu.org-mirror"
+      href="http://pkgs.fedoraproject.org"/>
   <repository type="git" name="freedesktop-git"
       href="http://anongit.freedesktop.org/git"/>
 
@@ -96,8 +98,8 @@
   </autotools>
 
   <autotools id="freetype6" autogen-sh="configure">
-    <branch module="freetype/freetype-2.4.11.tar.bz2" version="2.4.11"
-            repo="savannah.gnu.org"
+    <branch module="repo/pkgs/freetype/freetype-2.4.11.tar.bz2/b93435488942486c8d0ca22e8f768034/freetype-2.4.11.tar.bz2" version="2.4.11"
+            repo="savannah.gnu.org-mirror"
             hash="sha256:ef9d0bcb64647d9e5125dc7534d7ca371c98310fec87677c410f397f71ffbe3f"
             md5sum="b93435488942486c8d0ca22e8f768034">
       <patch file="freetype6-2.4.11-truetype-font-height-fix.patch" strip="1"/>
