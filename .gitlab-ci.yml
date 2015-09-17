@@ -1,0 +1,14 @@
+stages:
+  - build
+  - test
+  - deploy
+
+check-style:
+  stage: build
+  script:
+    - "Tools/Scripts/check-webkit-style -g HEAD"
+
+build:
+  stage: build
+  script:
+    - "Tools/Scripts/build-webkit --gtk"
