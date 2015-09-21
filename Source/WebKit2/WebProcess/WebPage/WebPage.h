@@ -48,6 +48,7 @@
 #include "ShareableBitmap.h"
 #include "UserData.h"
 #include "UserMediaPermissionRequestManager.h"
+#include "WebSocketPermissionRequestManager.h"
 #include "WorkerPermissionRequestManager.h"
 #include <WebCore/DictationAlternative.h>
 #include <WebCore/DragData.h>
@@ -465,6 +466,9 @@ public:
 
 #if ENABLE(GEOLOCATION)
     GeolocationPermissionRequestManager& geolocationPermissionRequestManager() { return m_geolocationPermissionRequestManager; }
+#endif
+#if ENABLE(WEB_SOCKETS)
+    WebSocketPermissionRequestManager& websocketPermissionRequestManager() { return m_websocketPermissionRequestManager; }
 #endif
 
 #if PLATFORM(IOS) || PLATFORM(EFL)
@@ -1103,6 +1107,8 @@ private:
 
     void didReceiveGeolocationPermissionDecision(uint64_t geolocationID, bool allowed);
 
+    void didReceiveWebSocketPermissionDecision(uint64_t websocketID, bool allowed);
+
     void didReceiveNotificationPermissionDecision(uint64_t notificationID, bool allowed);
 
 #if ENABLE(MEDIA_STREAM)
@@ -1299,6 +1305,10 @@ private:
 
 #if ENABLE(GEOLOCATION)
     GeolocationPermissionRequestManager m_geolocationPermissionRequestManager;
+#endif
+
+#if ENABLE(WEB_SOCKETS)
+    WebSocketPermissionRequestManager m_websocketPermissionRequestManager;
 #endif
 
 #if ENABLE(MEDIA_STREAM)

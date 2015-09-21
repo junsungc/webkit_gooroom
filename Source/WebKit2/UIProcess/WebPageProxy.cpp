@@ -332,6 +332,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_hasNetworkRequestsOnSuspended(false)
 #endif
     , m_geolocationPermissionRequestManager(*this)
+    , m_websocketPermissionRequestManager(*this)
     , m_notificationPermissionRequestManager(*this)
     , m_userMediaPermissionRequestManager(*this)
     , m_workerPermissionRequestManager(*this)
@@ -5035,6 +5036,9 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     }
 #endif
 
+#if ENABLE(WEB_SOCKETS)
+    m_websocketPermissionRequestManager.invalidateRequests();
+#endif
 #if ENABLE(GEOLOCATION)
     m_geolocationPermissionRequestManager.invalidateRequests();
 #endif
@@ -5321,6 +5325,20 @@ void WebPageProxy::requestGeolocationPermissionForFrame(uint64_t geolocationID, 
 
     if (m_pageClient.decidePolicyForGeolocationPermissionRequest(*frame, *origin, *request))
         return;
+
+    request->deny();
+}
+
+void WebPageProxy::requestWebSocketPermissionForFrame(uint64_t websocketID, uint64_t frameID, String originIdentifier)
+{
+    WebFrameProxy* frame = m_process->webFrame(frameID);
+    MESSAGE_CHECK(frame);
+
+    RefPtr<API::SecurityOrigin> origin = API::SecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(originIdentifier));
+    RefPtr<WebSocketPermissionRequestProxy> request = m_websocketPermissionRequestManager.createRequest(websocketID);
+
+    if (m_uiClient->decidePolicyForWebSocketPermissionRequest(this, frame, origin.get(), request.get()))
+    return;
 
     request->deny();
 }

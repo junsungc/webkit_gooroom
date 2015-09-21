@@ -49,7 +49,7 @@ void GeolocationPermissionRequestProxy::deny()
 {
     if (!m_manager)
         return;
-    
+
     m_manager->didReceiveGeolocationPermissionDecision(m_geolocationID, false);
     m_manager = 0;
 }

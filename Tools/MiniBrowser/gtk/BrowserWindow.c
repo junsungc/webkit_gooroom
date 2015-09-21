@@ -463,6 +463,10 @@ static gboolean webViewDecidePermissionRequest(WebKitWebView *webView, WebKitPer
         dialog_title = "Media plugin missing request";
         dialog_message_format = "The media backend was unable to find a plugin to play the requested media:\n%s.\nAllow to search and install the missing plugin?";
         dialog_message = webkit_install_missing_media_plugins_permission_request_get_description(WEBKIT_INSTALL_MISSING_MEDIA_PLUGINS_PERMISSION_REQUEST(request));
+    } else if (WEBKIT_IS_WEBSOCKET_PERMISSION_REQUEST(request)) {
+        dialog_title = "Websocket request";
+        dialog_message_format = "%s";
+        dialog_message = "Allow websocket request?";
     } else
         return FALSE;
 

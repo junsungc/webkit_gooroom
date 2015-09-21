@@ -1,0 +1,5 @@
+messages -> WebWebSocketManager {
+#if PLATFORM(IOS)
+    ResetPermissions();
+#endif
+}

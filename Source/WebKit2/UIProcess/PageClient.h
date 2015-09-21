@@ -140,6 +140,11 @@ public:
         return false;
     }
 
+    virtual bool decidePolicyForWebSocketPermissionRequest(WebFrameProxy&, API::SecurityOrigin&, WebSocketPermissionRequestProxy&)
+    {
+        return false;
+    }
+
     virtual void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) = 0;
 
 #if USE(COORDINATED_GRAPHICS_MULTIPROCESS)

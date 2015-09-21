@@ -160,6 +160,9 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitGeolocationPermissionRequest.cpp
     UIProcess/API/gtk/WebKitGeolocationPermissionRequest.h
     UIProcess/API/gtk/WebKitGeolocationPermissionRequestPrivate.h
+    UIProcess/API/gtk/WebKitWebSocketPermissionRequest.cpp
+    UIProcess/API/gtk/WebKitWebSocketPermissionRequest.h
+    UIProcess/API/gtk/WebKitWebSocketPermissionRequestPrivate.h
     UIProcess/API/gtk/WebKitWorkerPermissionRequest.cpp
     UIProcess/API/gtk/WebKitWorkerPermissionRequest.h
     UIProcess/API/gtk/WebKitWorkerPermissionRequestPrivate.h
@@ -397,6 +400,7 @@ set(WebKit2GTK_INSTALLED_HEADERS
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitFormSubmissionRequest.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitForwardDeclarations.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitGeolocationPermissionRequest.h
+    ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitWebSocketPermissionRequest.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitWorkerPermissionRequest.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitHitTestResult.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitInstallMissingMediaPluginsPermissionRequest.h

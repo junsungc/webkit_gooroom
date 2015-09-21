@@ -1024,6 +1024,7 @@ set(WebCore_SOURCES
     Modules/websockets/ThreadableWebSocketChannel.cpp
     Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp
     Modules/websockets/WebSocket.cpp
+    Modules/websockets/WebSocketController.cpp
     Modules/websockets/WebSocketChannel.cpp
     Modules/websockets/WebSocketDeflateFramer.cpp
     Modules/websockets/WebSocketDeflater.cpp

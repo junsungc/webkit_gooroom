@@ -47,11 +47,13 @@
 #include "Frame.h"
 #include "Logging.h"
 #include "MessageEvent.h"
+#include "Page.h"
 #include "ScriptController.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "ThreadableWebSocketChannel.h"
 #include "WebSocketChannel.h"
+#include "WebSocketController.h"
 #include <inspector/ScriptCallStack.h>
 #include <runtime/ArrayBuffer.h>
 #include <runtime/ArrayBufferView.h>
@@ -180,9 +182,12 @@ RefPtr<WebSocket> WebSocket::create(ScriptExecutionContext& context, const Strin
     RefPtr<WebSocket> webSocket(adoptRef(*new WebSocket(context)));
     webSocket->suspendIfNeeded();
 
-    webSocket->connect(context.completeURL(url), protocols, ec);
+    if (!webSocket->isValidURL(context.completeURL(url), protocols, ec))
+        return nullptr;
     if (ec)
         return nullptr;
+
+    webSocket->requestPermission();
 
     return WTF::move(webSocket);
 }
@@ -212,57 +217,66 @@ void WebSocket::connect(const String& url, const Vector<String>& protocols, Exce
     LOG(Network, "WebSocket %p connect() url='%s'", this, url.utf8().data());
     m_url = URL(URL(), url);
 
+    if (!isValidURL(url, protocols, ec))
+      return;
+
+    m_channel = ThreadableWebSocketChannel::create(scriptExecutionContext(), this);
+
+    String protocolString;
+    if (!protocols.isEmpty())
+        protocolString = joinStrings(protocols, subProtocolSeperator());
+
+    m_channel->connect(m_url, protocolString);
+    ActiveDOMObject::setPendingActivity(this);
+}
+
+bool WebSocket::isValidURL(const String& url, const Vector<String>& protocols, ExceptionCode& ec)
+{
+    m_url = URL(URL(), url);
+    if (!(protocols).isEmpty())
+        m_protocolString = joinStrings(protocols, subProtocolSeperator());
+ 
     if (!m_url.isValid()) {
         scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Invalid url for WebSocket " + m_url.stringCenterEllipsizedToLength());
         m_state = CLOSED;
         ec = SYNTAX_ERR;
-        return;
+        return false;
     }
 
     if (!m_url.protocolIs("ws") && !m_url.protocolIs("wss")) {
         scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Wrong url scheme for WebSocket " + m_url.stringCenterEllipsizedToLength());
         m_state = CLOSED;
         ec = SYNTAX_ERR;
-        return;
+        return false;
     }
     if (m_url.hasFragmentIdentifier()) {
         scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "URL has fragment component " + m_url.stringCenterEllipsizedToLength());
         m_state = CLOSED;
         ec = SYNTAX_ERR;
-        return;
+        return false;
     }
     if (!portAllowed(m_url)) {
         scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "WebSocket port " + String::number(m_url.port()) + " blocked");
         m_state = CLOSED;
         ec = SECURITY_ERR;
-        return;
+        return false;
     }
 
-    // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
     bool shouldBypassMainWorldContentSecurityPolicy = ContentSecurityPolicy::shouldBypassMainWorldContentSecurityPolicy(*scriptExecutionContext());
     if (!scriptExecutionContext()->contentSecurityPolicy()->allowConnectToSource(m_url, shouldBypassMainWorldContentSecurityPolicy)) {
         m_state = CLOSED;
 
         // FIXME: Should this be throwing an exception?
         ec = SECURITY_ERR;
-        return;
+        return false;
     }
 
-    m_channel = ThreadableWebSocketChannel::create(scriptExecutionContext(), this);
-
-    // FIXME: There is a disagreement about restriction of subprotocols between WebSocket API and hybi-10 protocol
-    // draft. The former simply says "only characters in the range U+0021 to U+007E are allowed," while the latter
-    // imposes a stricter rule: "the elements MUST be non-empty strings with characters as defined in [RFC2616],
-    // and MUST all be unique strings."
-    //
-    // Here, we throw SYNTAX_ERR if the given protocols do not meet the latter criteria. This behavior does not
-    // comply with WebSocket API specification, but it seems to be the only reasonable way to handle this conflict.
     for (auto& protocol : protocols) {
         if (!isValidProtocolString(protocol)) {
             scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Wrong protocol for WebSocket '" + encodeProtocolString(protocol) + "'");
             m_state = CLOSED;
             ec = SYNTAX_ERR;
-            return;
+            return false;
         }
     }
     HashSet<String> visited;
@@ -271,7 +285,7 @@ void WebSocket::connect(const String& url, const Vector<String>& protocols, Exce
             scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "WebSocket protocols contain duplicates: '" + encodeProtocolString(protocol) + "'");
             m_state = CLOSED;
             ec = SYNTAX_ERR;
-            return;
+            return false;
         }
     }
 
@@ -280,25 +294,43 @@ void WebSocket::connect(const String& url, const Vector<String>& protocols, Exce
         if (!document.frame()->loader().mixedContentChecker().canRunInsecureContent(document.securityOrigin(), m_url)) {
             // Balanced by the call to ActiveDOMObject::unsetPendingActivity() in WebSocket::stop().
             ActiveDOMObject::setPendingActivity(this);
-
             // We must block this connection. Instead of throwing an exception, we indicate this
             // using the error event. But since this code executes as part of the WebSocket's
             // constructor, we have to wait until the constructor has completed before firing the
             // event; otherwise, users can't connect to the event.
             RunLoop::main().dispatch([this]() {
-                dispatchOrQueueErrorEvent();
+                dispatchEvent(Event::create(eventNames().errorEvent, false, false));
                 stop();
             });
-            return;
+            return false;
         }
     }
 
-    String protocolString;
-    if (!protocols.isEmpty())
-        protocolString = joinStrings(protocols, subProtocolSeperator());
+    return true;
+}
 
-    m_channel->connect(m_url, protocolString);
+void WebSocket::connect()
+{
+    m_channel = ThreadableWebSocketChannel::create(scriptExecutionContext(), this);
+
+    m_channel->connect(m_url, m_protocolString);
     ActiveDOMObject::setPendingActivity(this);
+}
+
+void WebSocket::denyConnect()
+{
+    dispatchEvent(Event::create(eventNames().errorEvent, false, false));
+    m_state = CLOSED;
+}
+
+void WebSocket::requestPermission()
+{
+    Page* page = this->page();
+    if (!page)
+        return;
+
+    // Ask the embedder: it maintains the geolocation challenge policy itself.
+    WebSocketController::from(page)->requestPermission(this);
 }
 
 void WebSocket::send(const String& message, ExceptionCode& ec)
@@ -467,6 +499,22 @@ ScriptExecutionContext* WebSocket::scriptExecutionContext() const
 {
     return ActiveDOMObject::scriptExecutionContext();
 }
+
+Document* WebSocket::document() const
+{
+    return downcast<Document>(scriptExecutionContext());
+}
+
+Frame* WebSocket::frame() const
+{
+    return document() ? document()->frame() : nullptr;
+}
+
+Page* WebSocket::page() const
+{
+    return document() ? document()->page() : nullptr;
+}
+
 
 void WebSocket::contextDestroyed()
 {

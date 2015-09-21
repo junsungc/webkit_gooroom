@@ -105,6 +105,7 @@
 #include "WebUndoStep.h"
 #include "WebUserContentController.h"
 #include "WebUserMediaClient.h"
+#include "WebWebSocketClient.h"
 #include "WebWorkerClient.h"
 #include <JavaScriptCore/APICast.h>
 #include <WebCore/ArchiveResource.h>
@@ -299,6 +300,9 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #if ENABLE(GEOLOCATION)
     , m_geolocationPermissionRequestManager(this)
 #endif
+#if ENABLE(WEB_SOCKETS)
+    , m_websocketPermissionRequestManager(this)
+#endif
 #if ENABLE(MEDIA_STREAM)
     , m_userMediaPermissionRequestManager(*this)
 #endif
@@ -407,6 +411,9 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #endif
 #if ENABLE(GEOLOCATION)
     WebCore::provideGeolocationTo(m_page.get(), new WebGeolocationClient(this));
+#endif
+#if ENABLE(WEB_SOCKETS)
+    WebCore::provideWebSocketTo(m_page.get(), new WebWebSocketClient(this));
 #endif
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     WebCore::provideNotification(m_page.get(), new WebNotificationClient(this));
@@ -3377,6 +3384,13 @@ void WebPage::extendSandboxForFileFromOpenPanel(const SandboxExtension::Handle& 
 void WebPage::didReceiveGeolocationPermissionDecision(uint64_t geolocationID, bool allowed)
 {
     m_geolocationPermissionRequestManager.didReceiveGeolocationPermissionDecision(geolocationID, allowed);
+}
+#endif
+
+#if ENABLE(WEB_SOCKETS)
+void WebPage::didReceiveWebSocketPermissionDecision(uint64_t websocketID, bool allowed)
+{
+    m_websocketPermissionRequestManager.didReceiveWebSocketPermissionDecision(websocketID, allowed);
 }
 #endif
 

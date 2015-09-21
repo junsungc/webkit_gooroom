@@ -45,11 +45,16 @@
 
 namespace WebCore {
 
+class Document;
+class Frame;
 class Blob;
 class CloseEvent;
+class Page;
 class ThreadableWebSocketChannel;
+class WebSocketController;
 
 class WebSocket final : public RefCounted<WebSocket>, public EventTargetWithInlineData, public ActiveDOMObject, public WebSocketChannelClient {
+
 public:
     static void setIsAvailable(bool);
     static bool isAvailable();
@@ -59,6 +64,9 @@ public:
     static RefPtr<WebSocket> create(ScriptExecutionContext&, const String& url, const String& protocol, ExceptionCode&);
     static RefPtr<WebSocket> create(ScriptExecutionContext&, const String& url, const Vector<String>& protocols, ExceptionCode&);
     virtual ~WebSocket();
+
+    Document* document() const;
+    WEBCORE_EXPORT Frame* frame() const;
 
     enum State {
         CONNECTING = 0,
@@ -70,6 +78,8 @@ public:
     void connect(const String& url, ExceptionCode&);
     void connect(const String& url, const String& protocol, ExceptionCode&);
     void connect(const String& url, const Vector<String>& protocols, ExceptionCode&);
+    void connect();
+    void denyConnect();
 
     void send(const String& message, ExceptionCode&);
     void send(JSC::ArrayBuffer*, ExceptionCode&);
@@ -121,6 +131,11 @@ private:
     void stop() override;
     const char* activeDOMObjectName() const override;
 
+    bool isValidURL(const String& url, const Vector<String>& protocols, ExceptionCode&);
+    void requestPermission();
+
+    Page* page() const;
+
     virtual void refEventTarget() override { ref(); }
     virtual void derefEventTarget() override { deref(); }
 
@@ -145,6 +160,8 @@ private:
     bool m_shouldDelayEventFiring { false };
     Deque<Ref<Event>> m_pendingEvents;
     bool m_dispatchedErrorEvent { false };
+
+    String m_protocolString;
 };
 
 } // namespace WebCore

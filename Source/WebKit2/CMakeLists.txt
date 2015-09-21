@@ -50,6 +50,7 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/WebProcess/FileAPI"
     "${WEBKIT2_DIR}/WebProcess/FullScreen"
     "${WEBKIT2_DIR}/WebProcess/Geolocation"
+    "${WEBKIT2_DIR}/WebProcess/WebSocket"
     "${WEBKIT2_DIR}/WebProcess/Worker"
     "${WEBKIT2_DIR}/WebProcess/IconDatabase"
     "${WEBKIT2_DIR}/WebProcess/InjectedBundle"
@@ -335,6 +336,8 @@ set(WebKit2_SOURCES
     UIProcess/FrameLoadState.cpp
     UIProcess/GeolocationPermissionRequestManagerProxy.cpp
     UIProcess/GeolocationPermissionRequestProxy.cpp
+    UIProcess/WebSocketPermissionRequestManagerProxy.cpp
+    UIProcess/WebSocketPermissionRequestProxy.cpp
     UIProcess/WorkerPermissionRequestManagerProxy.cpp
     UIProcess/WorkerPermissionRequestProxy.cpp
     UIProcess/LegacySessionStateCodingNone.cpp
@@ -514,6 +517,9 @@ set(WebKit2_SOURCES
     WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp
     WebProcess/Geolocation/WebGeolocationManager.cpp
 
+    WebProcess/WebSocket/WebSocketPermissionRequestManager.cpp
+    WebProcess/WebSocket/WebWebSocketManager.cpp
+
     WebProcess/Worker/WorkerPermissionRequestManager.cpp
 
     WebProcess/IconDatabase/WebIconDatabaseProxy.cpp
@@ -602,6 +608,7 @@ set(WebKit2_SOURCES
     WebProcess/WebCoreSupport/WebEditorClient.cpp
     WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp
     WebProcess/WebCoreSupport/WebGeolocationClient.cpp
+    WebProcess/WebCoreSupport/WebWebSocketClient.cpp
     WebProcess/WebCoreSupport/WebWorkerClient.cpp
     WebProcess/WebCoreSupport/WebInspectorClient.cpp
     WebProcess/WebCoreSupport/WebNotificationClient.cpp
@@ -700,6 +707,8 @@ set(WebKit2_MESSAGES_IN_FILES
     WebProcess/FullScreen/WebFullScreenManager.messages.in
 
     WebProcess/Geolocation/WebGeolocationManager.messages.in
+
+    WebProcess/WebSocket/WebWebSocketManager.messages.in
 
     WebProcess/IconDatabase/WebIconDatabaseProxy.messages.in
 

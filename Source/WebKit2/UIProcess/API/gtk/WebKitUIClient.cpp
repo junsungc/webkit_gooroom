@@ -28,6 +28,7 @@
 #include "WebKitPrivate.h"
 #include "WebKitURIRequestPrivate.h"
 #include "WebKitUserMediaPermissionRequestPrivate.h"
+#include "WebKitWebSocketPermissionRequestPrivate.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
@@ -165,6 +166,13 @@ private:
     {
         GRefPtr<WebKitGeolocationPermissionRequest> geolocationPermissionRequest = adoptGRef(webkitGeolocationPermissionRequestCreate(permissionRequest));
         webkitWebViewMakePermissionRequest(m_webView, WEBKIT_PERMISSION_REQUEST(geolocationPermissionRequest.get()));
+        return true;
+    }
+
+    virtual bool decidePolicyForWebSocketPermissionRequest(WebPageProxy*, WebFrameProxy*, API::SecurityOrigin*, WebSocketPermissionRequestProxy* permissionRequest) override
+    {
+        GRefPtr<WebKitWebSocketPermissionRequest> websocketPermissionRequest = adoptGRef(webkitWebSocketPermissionRequestCreate(permissionRequest));
+        webkitWebViewMakePermissionRequest(m_webView, WEBKIT_PERMISSION_REQUEST(websocketPermissionRequest.get()));
         return true;
     }
 

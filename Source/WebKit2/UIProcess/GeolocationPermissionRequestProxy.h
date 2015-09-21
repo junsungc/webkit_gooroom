@@ -42,7 +42,7 @@ public:
 
     void allow();
     void deny();
-    
+
     void invalidate();
 
 private:

@@ -264,6 +264,9 @@ messages -> WebPageProxy {
 
     # Geolocation messages
     RequestGeolocationPermissionForFrame(uint64_t geolocationID, uint64_t frameID, String originIdentifier)
+
+    # WebSocket messages
+    RequestWebSocketPermissionForFrame(uint64_t websocketID, uint64_t frameID, String originIdentifier)
     
 #if ENABLE(MEDIA_STREAM)
     # MediaSteam messages

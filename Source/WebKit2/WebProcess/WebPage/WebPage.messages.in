@@ -286,6 +286,11 @@ messages -> WebPage LegacyReceiver {
     DidReceiveGeolocationPermissionDecision(uint64_t geolocationID, bool allowed)
 #endif
 
+#if ENABLE(WEB_SOCKETS)
+    # WebSocket
+    DidReceiveWebSocketPermissionDecision(uint64_t websocketID, bool allowed)
+#endif
+
 #if ENABLE(MEDIA_STREAM)
     # MediaSteam
     DidReceiveUserMediaPermissionDecision(uint64_t userMediaID, bool allowed, String deviceUIDVideo, String deviceUIDAudio)
