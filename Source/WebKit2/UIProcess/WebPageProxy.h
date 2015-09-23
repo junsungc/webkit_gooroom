@@ -63,6 +63,7 @@
 #include "WebPageProxyMessages.h"
 #include "WebPopupMenuProxy.h"
 #include "WebProcessLifetimeTracker.h"
+#include "WorkerPermissionRequestManagerProxy.h"
 #include <WebCore/Color.h>
 #include <WebCore/DragActions.h>
 #include <WebCore/FrameLoaderTypes.h>
@@ -1188,6 +1189,8 @@ private:
 
     void requestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, String originIdentifier, bool audio, bool video, const Vector<String>& deviceUIDsVideo, const Vector<String>& deviceUIDsAudio);
 
+    void requestWorkerPermissionForFrame(uint64_t workerID, uint64_t frameID, String originIdentifier);
+
     void runModal();
     void notifyScrollerThumbIsVisibleInRect(const WebCore::IntRect&);
     void recommendedScrollbarStyleDidChange(int32_t newStyle);
@@ -1561,6 +1564,7 @@ private:
     NotificationPermissionRequestManagerProxy m_notificationPermissionRequestManager;
 
     UserMediaPermissionRequestManagerProxy m_userMediaPermissionRequestManager;
+    WorkerPermissionRequestManagerProxy m_workerPermissionRequestManager;
 
     WebCore::ViewState::Flags m_viewState;
     bool m_viewWasEverInWindow;

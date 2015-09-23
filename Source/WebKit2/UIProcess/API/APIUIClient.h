@@ -133,6 +133,7 @@ public:
     virtual bool decidePolicyForGeolocationPermissionRequest(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, SecurityOrigin*, WebKit::GeolocationPermissionRequestProxy*) { return false; }
     virtual bool decidePolicyForUserMediaPermissionRequest(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, SecurityOrigin&, WebKit::UserMediaPermissionRequestProxy&) { return false; }
     virtual bool decidePolicyForNotificationPermissionRequest(WebKit::WebPageProxy*, SecurityOrigin*, WebKit::NotificationPermissionRequest*) { return false; }
+    virtual bool decidePolicyForWorkerPermissionRequest(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, SecurityOrigin*, WebKit::WorkerPermissionRequestProxy*) { return false; }
 
     // Printing.
     virtual float headerHeight(WebKit::WebPageProxy*, WebKit::WebFrameProxy*) { return 0; }

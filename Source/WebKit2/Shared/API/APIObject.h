@@ -148,6 +148,7 @@ public:
         VisitedLinkProvider,
         WebsiteDataRecord,
         WebsiteDataStore,
+        WorkerPermissionRequest,
 
 #if ENABLE(MEDIA_SESSION)
         MediaSessionFocusManager,

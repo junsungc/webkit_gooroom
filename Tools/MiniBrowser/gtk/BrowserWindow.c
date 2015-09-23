@@ -2,6 +2,7 @@
  * Copyright (C) 2006, 2007 Apple Inc.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2015 Company100, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -438,6 +439,10 @@ static gboolean webViewDecidePermissionRequest(WebKitWebView *webView, WebKitPer
         dialog_title = "Geolocation request";
         dialog_message_format = "%s";
         dialog_message = "Allow geolocation request?";
+    } else if (WEBKIT_IS_WORKER_PERMISSION_REQUEST(request)) {
+        dialog_title = "Worker request";
+        dialog_message_format = "%s";
+        dialog_message = "Allow web-worker?";
     } else if (WEBKIT_IS_NOTIFICATION_PERMISSION_REQUEST(request)) {
         dialog_title = "Notification request";
         dialog_message_format = "%s";

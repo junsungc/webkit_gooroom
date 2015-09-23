@@ -294,6 +294,9 @@ messages -> WebPage LegacyReceiver {
     # Notification
     DidReceiveNotificationPermissionDecision(uint64_t notificationID, bool allowed)
 
+    # Worker
+    DidReceiveWorkerPermissionDecision(uint64_t workerID, bool allowed)
+
     # Printing.
     BeginPrinting(uint64_t frameID, struct WebKit::PrintInfo printInfo)
     EndPrinting()

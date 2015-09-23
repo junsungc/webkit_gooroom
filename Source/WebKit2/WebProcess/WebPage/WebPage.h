@@ -48,6 +48,7 @@
 #include "ShareableBitmap.h"
 #include "UserData.h"
 #include "UserMediaPermissionRequestManager.h"
+#include "WorkerPermissionRequestManager.h"
 #include <WebCore/DictationAlternative.h>
 #include <WebCore/DragData.h>
 #include <WebCore/Editor.h>
@@ -474,6 +475,8 @@ public:
 #if ENABLE(MEDIA_STREAM)
     UserMediaPermissionRequestManager& userMediaPermissionRequestManager() { return m_userMediaPermissionRequestManager; }
 #endif
+
+    WorkerPermissionRequestManager& workerPermissionRequestManager() { return m_workerPermissionRequestManager; }
 
 #if PLATFORM(IOS)
     WebCore::FloatSize screenSize() const;
@@ -1106,6 +1109,8 @@ private:
     WK_EXPORT void didReceiveUserMediaPermissionDecision(uint64_t userMediaID, bool allowed, const String& deviceUIDVideo, const String& deviceUIDAudio);
 #endif
 
+    void didReceiveWorkerPermissionDecision(uint64_t workerID, bool allowed);
+
     void advanceToNextMisspelling(bool startBeforeSelection);
     void changeSpellingToWord(const String& word);
 #if USE(APPKIT)
@@ -1299,6 +1304,8 @@ private:
 #if ENABLE(MEDIA_STREAM)
     UserMediaPermissionRequestManager m_userMediaPermissionRequestManager;
 #endif
+
+    WorkerPermissionRequestManager m_workerPermissionRequestManager;
 
     std::unique_ptr<WebCore::PrintContext> m_printContext;
 #if PLATFORM(GTK)

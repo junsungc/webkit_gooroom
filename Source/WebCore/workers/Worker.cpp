@@ -42,6 +42,7 @@
 #include "MessageEvent.h"
 #include "NetworkStateNotifier.h"
 #include "TextEncoding.h"
+#include "WorkerController.h"
 #include "WorkerGlobalScopeProxy.h"
 #include "WorkerScriptLoader.h"
 #include "WorkerThread.h"
@@ -89,8 +90,8 @@ RefPtr<Worker> Worker::create(ScriptExecutionContext& context, const String& url
     // The worker context does not exist while loading, so we must ensure that the worker object is not collected, nor are its event listeners.
     worker->setPendingActivity(worker.ptr());
 
-    worker->m_scriptLoader = WorkerScriptLoader::create();
-    worker->m_scriptLoader->loadAsynchronously(&context, scriptURL, DenyCrossOriginRequests, worker.ptr());
+    worker->m_scriptURL = scriptURL;
+    WorkerController::from(downcast<Document>(context).page())->requestPermission(worker.ptr());
 
     return WTF::move(worker);
 }
@@ -170,6 +171,20 @@ void Worker::notifyFinished()
     m_scriptLoader = nullptr;
 
     unsetPendingActivity(this);
+}
+
+void Worker::setIsAllowed(bool allowed)
+{
+    Ref<Worker> protect(*this);
+
+    if (!allowed) {
+        dispatchEvent(Event::create(eventNames().errorEvent, false, true));
+        unsetPendingActivity(this);
+        return;
+    }
+
+    m_scriptLoader = WorkerScriptLoader::create();
+    m_scriptLoader->loadAsynchronously(m_scriptExecutionContext, m_scriptURL, DenyCrossOriginRequests, this);
 }
 
 } // namespace WebCore

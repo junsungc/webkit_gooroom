@@ -2746,6 +2746,7 @@ set(WebCore_SOURCES
     workers/DedicatedWorkerGlobalScope.cpp
     workers/DedicatedWorkerThread.cpp
     workers/Worker.cpp
+    workers/WorkerController.cpp
     workers/WorkerEventQueue.cpp
     workers/WorkerGlobalScope.cpp
     workers/WorkerLocation.cpp

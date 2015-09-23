@@ -105,6 +105,7 @@
 #include "WebUndoStep.h"
 #include "WebUserContentController.h"
 #include "WebUserMediaClient.h"
+#include "WebWorkerClient.h"
 #include <JavaScriptCore/APICast.h>
 #include <WebCore/ArchiveResource.h>
 #include <WebCore/Chrome.h>
@@ -301,6 +302,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #if ENABLE(MEDIA_STREAM)
     , m_userMediaPermissionRequestManager(*this)
 #endif
+    , m_workerPermissionRequestManager(this)
     , m_pageScrolledHysteresis([this](HysteresisState state) { if (state == HysteresisState::Stopped) pageStoppedScrolling(); }, pageScrollHysteresisSeconds)
     , m_canRunBeforeUnloadConfirmPanel(parameters.canRunBeforeUnloadConfirmPanel)
     , m_canRunModal(parameters.canRunModal)
@@ -418,6 +420,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #if ENABLE(MEDIA_STREAM)
     WebCore::provideUserMediaTo(m_page.get(), new WebUserMediaClient(*this));
 #endif
+    WebCore::provideWorkerTo(m_page.get(), new WebWorkerClient(this));
 
 #if ENABLE(REMOTE_INSPECTOR)
     m_page->setRemoteInspectionAllowed(true);
@@ -3388,6 +3391,11 @@ void WebPage::didReceiveUserMediaPermissionDecision(uint64_t userMediaID, bool a
     m_userMediaPermissionRequestManager.didReceiveUserMediaPermissionDecision(userMediaID, allowed, deviceUIDVideo, deviceUIDAudio);
 }
 #endif
+
+void WebPage::didReceiveWorkerPermissionDecision(uint64_t workerID, bool allowed)
+{
+    m_workerPermissionRequestManager.didReceiveWorkerPermissionDecision(workerID, allowed);
+}
 
 #if !PLATFORM(IOS)
 void WebPage::advanceToNextMisspelling(bool startBeforeSelection)

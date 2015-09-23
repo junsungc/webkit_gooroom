@@ -272,6 +272,10 @@ messages -> WebPageProxy {
 
     # Notification messages
     RequestNotificationPermission(uint64_t requestID, String originIdentifier)
+
+    # Worker messages
+    RequestWorkerPermissionForFrame(uint64_t workerID, uint64_t frameID, String originIdentifier)
+
     ShowNotification(String title, String body, String iconURL, String tag, String lang, String dir, String originIdentifier, uint64_t notificationID)
     CancelNotification(uint64_t notificationID)
     ClearNotifications(Vector<uint64_t> notificationIDs)

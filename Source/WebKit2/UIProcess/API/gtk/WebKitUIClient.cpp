@@ -31,6 +31,7 @@
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
+#include "WebKitWorkerPermissionRequestPrivate.h"
 #include "WebPageProxy.h"
 #include <WebCore/GtkUtilities.h>
 #include <wtf/glib/GRefPtr.h>
@@ -178,6 +179,13 @@ private:
     {
         GRefPtr<WebKitNotificationPermissionRequest> notificationPermissionRequest = adoptGRef(webkitNotificationPermissionRequestCreate(permissionRequest));
         webkitWebViewMakePermissionRequest(m_webView, WEBKIT_PERMISSION_REQUEST(notificationPermissionRequest.get()));
+        return true;
+    }
+
+    virtual bool decidePolicyForWorkerPermissionRequest(WebPageProxy*, WebFrameProxy*, API::SecurityOrigin*, WorkerPermissionRequestProxy* permissionRequest) override
+    {
+        GRefPtr<WebKitWorkerPermissionRequest> workerPermissionRequest = adoptGRef(webkitWorkerPermissionRequestCreate(permissionRequest));
+        webkitWebViewMakePermissionRequest(m_webView, WEBKIT_PERMISSION_REQUEST(workerPermissionRequest.get()));
         return true;
     }
 

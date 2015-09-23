@@ -29,6 +29,7 @@
 
 #include "AbstractWorker.h"
 #include "ActiveDOMObject.h"
+#include "Document.h"
 #include "EventListener.h"
 #include "EventTarget.h"
 #include "MessagePort.h"
@@ -36,10 +37,12 @@
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
 
+class Frame;
 class ScriptExecutionContext;
 class WorkerGlobalScopeProxy;
 class WorkerScriptLoader;
@@ -65,6 +68,10 @@ public:
     // ActiveDOMObject API.
     bool hasPendingActivity() const override;
 
+    Frame* frame() const { return downcast<Document>(m_scriptExecutionContext)->frame(); }
+
+    WEBCORE_EXPORT void setIsAllowed(bool);
+
 private:
     explicit Worker(ScriptExecutionContext&);
 
@@ -83,6 +90,8 @@ private:
 
     RefPtr<WorkerScriptLoader> m_scriptLoader;
     WorkerGlobalScopeProxy* m_contextProxy; // The proxy outlives the worker to perform thread shutdown.
+
+    URL m_scriptURL;
 };
 
 } // namespace WebCore

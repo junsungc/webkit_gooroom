@@ -593,6 +593,24 @@ webkit_geolocation_permission_request_get_type
 </SECTION>
 
 <SECTION>
+<FILE>WebKitWorkerPermissionRequest</FILE>
+WebKitWorkerPermissionRequest
+
+<SUBSECTION Standard>
+WebKitWorkerPermissionRequestClass
+WEBKIT_TYPE_WORKER_PERMISSION_REQUEST
+WEBKIT_WORKER_PERMISSION_REQUEST
+WEBKIT_IS_WORKER_PERMISSION_REQUEST
+WEBKIT_WORKER_PERMISSION_REQUEST_CLASS
+WEBKIT_IS_WORKER_PERMISSION_REQUEST_CLASS
+WEBKIT_WORKER_PERMISSION_REQUEST_GET_CLASS
+
+<SUBSECTION Private>
+WebKitWorkerPermissionRequestPrivate
+webkit_worker_permission_request_get_type
+</SECTION>
+
+<SECTION>
 <FILE>WebKitInstallMissingMediaPluginsPermissionRequest</FILE>
 WebKitInstallMissingMediaPluginsPermissionRequest
 webkit_install_missing_media_plugins_permission_request_get_description

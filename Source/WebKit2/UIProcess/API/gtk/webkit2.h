@@ -76,6 +76,7 @@
 #include <webkit2/WebKitWebViewBase.h>
 #include <webkit2/WebKitWebsiteDataManager.h>
 #include <webkit2/WebKitWindowProperties.h>
+#include <webkit2/WebKitWorkerPermissionRequest.h>
 
 #undef __WEBKIT2_H_INSIDE__
 

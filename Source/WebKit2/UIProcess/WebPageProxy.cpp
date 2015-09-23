@@ -334,6 +334,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_geolocationPermissionRequestManager(*this)
     , m_notificationPermissionRequestManager(*this)
     , m_userMediaPermissionRequestManager(*this)
+    , m_workerPermissionRequestManager(*this)
     , m_viewState(ViewState::NoFlags)
     , m_viewWasEverInWindow(false)
 #if PLATFORM(IOS)
@@ -5042,6 +5043,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 #endif
 
     m_notificationPermissionRequestManager.invalidateRequests();
+    m_workerPermissionRequestManager.invalidateRequests();
 
     m_toolTip = String();
 
@@ -5345,6 +5347,20 @@ void WebPageProxy::requestNotificationPermission(uint64_t requestID, const Strin
     
     if (!m_uiClient->decidePolicyForNotificationPermissionRequest(this, origin.get(), request.get()))
         request->deny();
+}
+
+void WebPageProxy::requestWorkerPermissionForFrame(uint64_t workerID, uint64_t frameID, String originIdentifier)
+{
+    WebFrameProxy* frame = m_process->webFrame(frameID);
+    MESSAGE_CHECK(frame);
+
+    RefPtr<API::SecurityOrigin> origin = API::SecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(originIdentifier));
+    RefPtr<WorkerPermissionRequestProxy> request = m_workerPermissionRequestManager.createRequest(workerID);
+
+    if (m_uiClient->decidePolicyForWorkerPermissionRequest(this, frame, origin.get(), request.get()))
+        return;
+
+    request->deny();
 }
 
 void WebPageProxy::showNotification(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, const String& dir, const String& originString, uint64_t notificationID)
