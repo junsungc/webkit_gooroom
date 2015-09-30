@@ -40,50 +40,50 @@
 
 namespace WebCore {
 
-    class ScriptExecutionContext;
-    class WorkerGlobalScopeProxy;
-    class WorkerScriptLoader;
+class ScriptExecutionContext;
+class WorkerGlobalScopeProxy;
+class WorkerScriptLoader;
 
-    typedef int ExceptionCode;
+typedef int ExceptionCode;
 
-    class Worker final : public AbstractWorker, public ActiveDOMObject, private WorkerScriptLoaderClient {
-    public:
-        static RefPtr<Worker> create(ScriptExecutionContext&, const String& url, ExceptionCode&);
-        virtual ~Worker();
+class Worker final : public AbstractWorker, public ActiveDOMObject, private WorkerScriptLoaderClient {
+public:
+    static RefPtr<Worker> create(ScriptExecutionContext&, const String& url, ExceptionCode&);
+    virtual ~Worker();
 
-        virtual EventTargetInterface eventTargetInterface() const override { return WorkerEventTargetInterfaceType; }
+    virtual EventTargetInterface eventTargetInterface() const override { return WorkerEventTargetInterfaceType; }
 
-        void postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray*, ExceptionCode&);
-        // Needed for Objective-C bindings (see bug 28774).
-        void postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort*, ExceptionCode&);
+    void postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray*, ExceptionCode&);
+    // Needed for Objective-C bindings (see bug 28774).
+    void postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort*, ExceptionCode&);
 
-        void terminate();
+    void terminate();
 
-        // EventTarget API.
-        virtual ScriptExecutionContext* scriptExecutionContext() const override final { return ActiveDOMObject::scriptExecutionContext(); }
+    // EventTarget API.
+    virtual ScriptExecutionContext* scriptExecutionContext() const override final { return ActiveDOMObject::scriptExecutionContext(); }
 
-        // ActiveDOMObject API.
-        bool hasPendingActivity() const override;
+    // ActiveDOMObject API.
+    bool hasPendingActivity() const override;
 
-    private:
-        explicit Worker(ScriptExecutionContext&);
+private:
+    explicit Worker(ScriptExecutionContext&);
 
-        void notifyNetworkStateChange(bool isOnline);
+    void notifyNetworkStateChange(bool isOnline);
 
-        // WorkerScriptLoaderClient callbacks
-        virtual void didReceiveResponse(unsigned long identifier, const ResourceResponse&) override;
-        virtual void notifyFinished() override;
+    // WorkerScriptLoaderClient callbacks
+    virtual void didReceiveResponse(unsigned long identifier, const ResourceResponse&) override;
+    virtual void notifyFinished() override;
 
-        // ActiveDOMObject API.
-        bool canSuspendForPageCache() const override;
-        void stop() override;
-        const char* activeDOMObjectName() const override;
+    // ActiveDOMObject API.
+    bool canSuspendForPageCache() const override;
+    void stop() override;
+    const char* activeDOMObjectName() const override;
 
-        friend void networkStateChanged(bool isOnLine);
+    friend void networkStateChanged(bool isOnLine);
 
-        RefPtr<WorkerScriptLoader> m_scriptLoader;
-        WorkerGlobalScopeProxy* m_contextProxy; // The proxy outlives the worker to perform thread shutdown.
-    };
+    RefPtr<WorkerScriptLoader> m_scriptLoader;
+    WorkerGlobalScopeProxy* m_contextProxy; // The proxy outlives the worker to perform thread shutdown.
+};
 
 } // namespace WebCore
 
