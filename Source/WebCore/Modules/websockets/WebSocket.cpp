@@ -218,7 +218,7 @@ void WebSocket::connect(const String& url, const Vector<String>& protocols, Exce
     m_url = URL(URL(), url);
 
     if (!isValidURL(url, protocols, ec))
-      return;
+        return;
 
     m_channel = ThreadableWebSocketChannel::create(scriptExecutionContext(), this);
 
