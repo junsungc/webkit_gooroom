@@ -173,7 +173,7 @@ void Worker::notifyFinished()
     unsetPendingActivity(this);
 }
 
-void Worker::setIsAllowed(bool allowed)
+void Worker::notifyPermissionDecision(bool allowed)
 {
     Ref<Worker> protect(*this);
 

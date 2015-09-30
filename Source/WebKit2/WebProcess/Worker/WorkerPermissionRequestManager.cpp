@@ -56,7 +56,7 @@ void WorkerPermissionRequestManager::startRequestForWorker(Worker* worker)
 {
     Frame* frame = worker->frame();
     if (!frame) {
-        worker->setIsAllowed(false);
+        worker->notifyPermissionDecision(false);
         return;
     }
 
@@ -88,7 +88,7 @@ void WorkerPermissionRequestManager::didReceiveWorkerPermissionDecision(uint64_t
         return;
     m_workerToIDMap.remove(worker);
 
-    worker->setIsAllowed(allowed);
+    worker->notifyPermissionDecision(allowed);
 }
 
 } // namespace WebKit

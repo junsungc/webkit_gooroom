@@ -70,7 +70,7 @@ public:
 
     Frame* frame() const { return downcast<Document>(m_scriptExecutionContext)->frame(); }
 
-    WEBCORE_EXPORT void setIsAllowed(bool);
+    WEBCORE_EXPORT void notifyPermissionDecision(bool allowed);
 
 private:
     explicit Worker(ScriptExecutionContext&);
