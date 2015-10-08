@@ -79,7 +79,7 @@ public:
     void connect(const String& url, const String& protocol, ExceptionCode&);
     void connect(const String& url, const Vector<String>& protocols, ExceptionCode&);
     void connect();
-    void denyConnect();
+    void rejectConnect();
 
     void send(const String& message, ExceptionCode&);
     void send(JSC::ArrayBuffer*, ExceptionCode&);

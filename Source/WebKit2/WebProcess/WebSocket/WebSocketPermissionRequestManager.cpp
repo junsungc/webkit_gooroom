@@ -90,7 +90,7 @@ void WebSocketPermissionRequestManager::didReceiveWebSocketPermissionDecision(ui
     if (allowed)
         websocket->connect();
     else
-        websocket->denyConnect();
+        websocket->rejectConnect();
 }
 
 } // namespace WebKit

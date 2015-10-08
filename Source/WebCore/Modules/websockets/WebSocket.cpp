@@ -317,7 +317,7 @@ void WebSocket::connect()
     ActiveDOMObject::setPendingActivity(this);
 }
 
-void WebSocket::denyConnect()
+void WebSocket::rejectConnect()
 {
     dispatchEvent(Event::create(eventNames().errorEvent, false, false));
     m_state = CLOSED;
