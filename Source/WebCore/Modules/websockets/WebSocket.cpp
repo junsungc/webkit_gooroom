@@ -319,7 +319,7 @@ void WebSocket::connect()
 
 void WebSocket::rejectConnect()
 {
-    dispatchEvent(Event::create(eventNames().errorEvent, false, false));
+    dispatchOrQueueEvent(CloseEvent::create(true, WebSocketChannel::CloseEventCodeRejectedByUser, "Creating websocket is rejected by user."));
     m_state = CLOSED;
 }
 

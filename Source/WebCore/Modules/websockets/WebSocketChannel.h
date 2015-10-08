@@ -105,6 +105,7 @@ public:
         CloseEventCodeInternalError = 1011,
         CloseEventCodeTLSHandshake = 1015,
         CloseEventCodeMinimumUserDefined = 3000,
+        CloseEventCodeRejectedByUser = 3001,
         CloseEventCodeMaximumUserDefined = 4999
     };
 
