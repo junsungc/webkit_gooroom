@@ -64,7 +64,7 @@ WebInspector.NetworkObserver = class NetworkObserver
 
     webSocketWillSendHandshakeRequest(requestId, frameId, timestamp, request)
     {
-        // FIXME: Not implemented.
+        WebInspector.frameResourceManager.webSocketHandshakeWillBeSent(requestId, frameId, timestamp, request);
     }
 
     webSocketHandshakeResponseReceived(requestId, timestamp, response)

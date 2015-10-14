@@ -202,6 +202,29 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
         this._resourceRequestIdentifierMap[requestIdentifier] = resource;
     }
 
+    webSocketHandshakeWillBeSent(requestIdentifier, frameIdentifier, timestamp, request)
+    {
+        // Called from WebInspector.NetworkObserver.
+
+        // Ignore this while waiting for the whole frame/resource tree.
+        if (this._waitingForMainFrameResourceTreePayload)
+            return;
+
+        var elapsedTime = WebInspector.timelineManager.computeElapsedTime(timestamp);
+
+        var resource = this._resourceRequestIdentifierMap[requestIdentifier];
+        if (resource)
+            return;
+
+        // FIXME: Is that correct to use "frame.loaderIdentifier" always?
+        var frame = this.frameForIdentifier(frameIdentifier);
+
+        // FIXME: Use existing constant value instead of the magic string "WebSocket".
+        resource = this._addNewResourceToFrame(requestIdentifier, frameIdentifier, frame.loaderIdentifier, request.url, "WebSocket", request.method, request.headers, null, elapsedTime, null, null, null);
+
+        this._resourceRequestIdentifierMap[requestIdentifier] = resource;
+    }
+
     markResourceRequestAsServedFromMemoryCache(requestIdentifier)
     {
         // Called from WebInspector.NetworkObserver.
