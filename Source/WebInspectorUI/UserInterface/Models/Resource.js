@@ -445,14 +445,14 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         if (statusCode === 304 && !this._cached)
             this.markAsCached();
 
-        if (oldURL !== url) {
+        if (oldURL !== url && type !== WebInspector.Resource.Type.WebSocket) {
             // Delete the URL components so the URL is re-parsed the next time it is requested.
             delete this._urlComponents;
 
             this.dispatchEventToListeners(WebInspector.Resource.Event.URLDidChange, {oldURL});
         }
 
-        if (oldMIMEType !== mimeType) {
+        if (oldMIMEType !== mimeType && type !== WebInspector.Resource.Type.WebSocket) {
             // Delete the MIME-type components so the MIME-type is re-parsed the next time it is requested.
             delete this._mimeTypeComponents;
 

@@ -225,6 +225,26 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
         this._resourceRequestIdentifierMap[requestIdentifier] = resource;
     }
 
+    webSocketHandshakeDidReceiveResponse(requestIdentifier, timestamp, response)
+    {
+        // Called from WebInspector.NetworkObserver.
+
+        // Ignore this while waiting for the whole frame/resource tree.
+        if (this._waitingForMainFrameResourceTreePayload)
+            return;
+
+        var elapsedTime = WebInspector.timelineManager.computeElapsedTime(timestamp);
+
+        var resource = this._resourceRequestIdentifierMap[requestIdentifier];
+        if (!resource)
+            return;
+
+        // First 2 arguments are URL and MIME-Type but websocket handshake
+        // response doesn't provide it currently. Also workaround has been
+        // added to Resource.updateForResponse for WebSocket type.
+        resource.updateForResponse("", "", "WebSocket", response.headers, response.status, response.statusText, elapsedTime);
+    }
+
     markResourceRequestAsServedFromMemoryCache(requestIdentifier)
     {
         // Called from WebInspector.NetworkObserver.
