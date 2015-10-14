@@ -76,6 +76,8 @@
             "type": "object",
             "description": "WebSocket request data.",
             "properties": [
+                { "name": "url", "type": "string", "description": "Request URL." },
+                { "name": "method", "type": "string", "description": "HTTP request method." },
                 { "name": "headers", "$ref": "Headers", "description": "HTTP response headers." }
             ]
         },

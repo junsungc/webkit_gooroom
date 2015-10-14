@@ -550,6 +550,8 @@ void InspectorResourceAgent::didCreateWebSocket(unsigned long identifier, const 
 void InspectorResourceAgent::willSendWebSocketHandshakeRequest(unsigned long identifier, Frame* frame, const ResourceRequest& request)
 {
     auto requestObject = Inspector::Protocol::Network::WebSocketRequest::create()
+        .setUrl(request.url().string())
+        .setMethod(request.httpMethod())
         .setHeaders(buildObjectForHeaders(request.httpHeaderFields()))
         .release();
     m_frontendDispatcher->webSocketWillSendHandshakeRequest(IdentifiersFactory::requestId(identifier), m_pageAgent->frameId(frame), timestamp(), WTF::move(requestObject));
