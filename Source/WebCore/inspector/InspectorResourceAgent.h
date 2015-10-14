@@ -99,7 +99,7 @@ public:
     void willDestroyCachedResource(CachedResource&);
 #if ENABLE(WEB_SOCKETS)
     void didCreateWebSocket(unsigned long identifier, const URL& requestURL);
-    void willSendWebSocketHandshakeRequest(unsigned long identifier, const ResourceRequest&);
+    void willSendWebSocketHandshakeRequest(unsigned long identifier, Frame*, const ResourceRequest&);
     void didReceiveWebSocketHandshakeResponse(unsigned long identifier, const ResourceResponse&);
     void didCloseWebSocket(unsigned long identifier);
     void didReceiveWebSocketFrame(unsigned long identifier, const WebSocketFrame&);

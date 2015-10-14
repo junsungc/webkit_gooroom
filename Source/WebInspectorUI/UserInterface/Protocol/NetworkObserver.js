@@ -62,7 +62,7 @@ WebInspector.NetworkObserver = class NetworkObserver
         WebInspector.frameResourceManager.resourceRequestWasServedFromMemoryCache(requestId, frameId, loaderId, resource, timestamp, initiator);
     }
 
-    webSocketWillSendHandshakeRequest(requestId, timestamp, request)
+    webSocketWillSendHandshakeRequest(requestId, frameId, timestamp, request)
     {
         // FIXME: Not implemented.
     }

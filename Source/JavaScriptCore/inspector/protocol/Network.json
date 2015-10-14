@@ -276,6 +276,7 @@
             "description": "Fired when WebSocket is about to initiate handshake.",
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
+                { "name": "frameId", "$ref": "FrameId", "description": "Frame identifier." },
                 { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
                 { "name": "request", "$ref": "WebSocketRequest", "description": "WebSocket request data." }
             ]

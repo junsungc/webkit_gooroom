@@ -1010,7 +1010,7 @@ void InspectorInstrumentation::willSendWebSocketHandshakeRequestImpl(Instrumenti
         return;
 
     if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
-        resourceAgent->willSendWebSocketHandshakeRequest(identifier, request);
+        resourceAgent->willSendWebSocketHandshakeRequest(identifier, document->frame(), request);
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent())
         timelineAgent->willSendWebSocketHandshakeRequest(identifier, document->frame());
 }

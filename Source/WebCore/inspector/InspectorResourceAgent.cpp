@@ -547,12 +547,12 @@ void InspectorResourceAgent::didCreateWebSocket(unsigned long identifier, const 
     m_frontendDispatcher->webSocketCreated(IdentifiersFactory::requestId(identifier), requestURL.string());
 }
 
-void InspectorResourceAgent::willSendWebSocketHandshakeRequest(unsigned long identifier, const ResourceRequest& request)
+void InspectorResourceAgent::willSendWebSocketHandshakeRequest(unsigned long identifier, Frame* frame, const ResourceRequest& request)
 {
     auto requestObject = Inspector::Protocol::Network::WebSocketRequest::create()
         .setHeaders(buildObjectForHeaders(request.httpHeaderFields()))
         .release();
-    m_frontendDispatcher->webSocketWillSendHandshakeRequest(IdentifiersFactory::requestId(identifier), timestamp(), WTF::move(requestObject));
+    m_frontendDispatcher->webSocketWillSendHandshakeRequest(IdentifiersFactory::requestId(identifier), m_pageAgent->frameId(frame), timestamp(), WTF::move(requestObject));
 }
 
 void InspectorResourceAgent::didReceiveWebSocketHandshakeResponse(unsigned long identifier, const ResourceResponse& response)
