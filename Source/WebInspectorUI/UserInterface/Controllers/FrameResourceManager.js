@@ -245,6 +245,24 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
         resource.updateForResponse("", "", "WebSocket", response.headers, response.status, response.statusText, elapsedTime);
     }
 
+    webSocketDidClose(requestIdentifier, timestamp)
+    {
+        // Called from WebInspector.NetworkObserver.
+
+        // Ignore this while waiting for the whole frame/resource tree.
+        if (this._waitingForMainFrameResourceTreePayload)
+            return;
+
+        var resource = this._resourceRequestIdentifierMap[requestIdentifier];
+        if (!resource)
+            return;
+
+        var elapsedTime = WebInspector.timelineManager.computeElapsedTime(timestamp);
+        resource.markAsFinished(elapsedTime);
+
+        delete this._resourceRequestIdentifierMap[requestIdentifier];
+    }
+
     markResourceRequestAsServedFromMemoryCache(requestIdentifier)
     {
         // Called from WebInspector.NetworkObserver.
