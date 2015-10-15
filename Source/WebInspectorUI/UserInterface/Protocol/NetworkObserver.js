@@ -82,7 +82,7 @@ WebInspector.NetworkObserver = class NetworkObserver
         WebInspector.frameResourceManager.webSocketDidClose(requestId, timestamp);
     }
 
-    webSocketFrameReceived(requestId, timestamp, response)
+    webSocketFrameReceived(requestId, timestamp, webSocketFrame)
     {
         // FIXME: Not implemented.
     }
@@ -92,7 +92,7 @@ WebInspector.NetworkObserver = class NetworkObserver
         // FIXME: Not implemented.
     }
 
-    webSocketFrameSent(requestId, timestamp, response)
+    webSocketFrameSent(requestId, timestamp, webSocketFrame)
     {
         // FIXME: Not implemented.
     }
