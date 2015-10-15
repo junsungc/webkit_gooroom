@@ -263,6 +263,36 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
         delete this._resourceRequestIdentifierMap[requestIdentifier];
     }
 
+    webSocketDidReceiveFrame(requestIdentifier, timestamp, webSocketFrame)
+    {
+        // Called from WebInspector.NetworkObserver.
+
+        // Ignore this while waiting for the whole frame/resource tree.
+        if (this._waitingForMainFrameResourceTreePayload)
+            return;
+
+        var resource = this._resourceRequestIdentifierMap[requestIdentifier];
+        if (!resource)
+            return;
+
+        resource.addWebSocketFrame(webSocketFrame, timestamp, false);
+    }
+
+    webSocketDidSendFrame(requestIdentifier, timestamp, webSocketFrame)
+    {
+        // Called from WebInspector.NetworkObserver.
+
+        // Ignore this while waiting for the whole frame/resource tree.
+        if (this._waitingForMainFrameResourceTreePayload)
+            return;
+
+        var resource = this._resourceRequestIdentifierMap[requestIdentifier];
+        if (!resource)
+            return;
+
+        resource.addWebSocketFrame(webSocketFrame, timestamp, true);
+    }
+
     markResourceRequestAsServedFromMemoryCache(requestIdentifier)
     {
         // Called from WebInspector.NetworkObserver.

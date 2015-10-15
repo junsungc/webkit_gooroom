@@ -54,6 +54,7 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         this._size = NaN;
         this._transferSize = NaN;
         this._cached = false;
+        this._webSocketFrames = [];
     }
 
     // Static
@@ -371,6 +372,11 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         return this._scripts || [];
     }
 
+    get webSocketFrames()
+    {
+        return this._webSocketFrames;
+    }
+
     scriptForLocation(sourceCodeLocation)
     {
         console.assert(!(this instanceof WebInspector.SourceMapResource));
@@ -650,6 +656,25 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
     {
         cookie[WebInspector.Resource.URLCookieKey] = this.url.hash;
         cookie[WebInspector.Resource.MainResourceCookieKey] = this.isMainResource();
+    }
+
+    addWebSocketFrame(frame, timestamp, isSentFrame)
+    {
+        console.assert(this._type === WebInspector.Resource.Type.WebSocket);
+
+        // Ignore control frames, such as ping, pong.
+        if (frame.opcode > 2)
+            return;
+
+        this._webSocketFrames.push({
+            isSent: isSentFrame,
+            opcode: frame.opcode,
+            mask: frame.mask,
+            data: frame.payloadData,
+            size: frame.payloadData.length,
+            time: timestamp - this._requestSentTimestamp
+        });
+        this.dispatchEventToListeners(WebInspector.Resource.Event.WebSocketFrameWasAdded);
     }
 };
 

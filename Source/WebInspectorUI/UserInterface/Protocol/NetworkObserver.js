@@ -84,7 +84,7 @@ WebInspector.NetworkObserver = class NetworkObserver
 
     webSocketFrameReceived(requestId, timestamp, webSocketFrame)
     {
-        // FIXME: Not implemented.
+        WebInspector.frameResourceManager.webSocketDidReceiveFrame(requestId, timestamp, webSocketFrame);
     }
 
     webSocketFrameError(requestId, timestamp, errorMessage)
@@ -94,6 +94,6 @@ WebInspector.NetworkObserver = class NetworkObserver
 
     webSocketFrameSent(requestId, timestamp, webSocketFrame)
     {
-        // FIXME: Not implemented.
+        WebInspector.frameResourceManager.webSocketDidSendFrame(requestId, timestamp, webSocketFrame);
     }
 };
