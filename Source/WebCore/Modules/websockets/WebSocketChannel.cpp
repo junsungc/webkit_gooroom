@@ -433,9 +433,9 @@ bool WebSocketChannel::processBuffer()
         int headerLength = m_handshake->readServerHandshake(m_buffer.data(), m_buffer.size());
         if (headerLength <= 0)
             return false;
+        if (m_identifier)
+            InspectorInstrumentation::didReceiveWebSocketHandshakeResponse(m_document, m_identifier, m_handshake->serverHandshakeResponse());
         if (m_handshake->mode() == WebSocketHandshake::Connected) {
-            if (m_identifier)
-                InspectorInstrumentation::didReceiveWebSocketHandshakeResponse(m_document, m_identifier, m_handshake->serverHandshakeResponse());
             if (!m_handshake->serverSetCookie().isEmpty()) {
                 if (cookiesEnabled(m_document)) {
                     // Exception (for sandboxed documents) ignored.
