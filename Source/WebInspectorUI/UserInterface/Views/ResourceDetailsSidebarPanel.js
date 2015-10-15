@@ -94,6 +94,10 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
         this._responseHeadersSection = new WebInspector.DetailsSection("resource-response-headers", WebInspector.UIString("Response Headers"));
         this._responseHeadersSection.groups = [new WebInspector.DetailsSectionGroup([this._responseHeadersRow])];
 
+        this._webSocketFramesRow = new WebInspector.DetailsSectionDataGridRow(null, WebInspector.UIString("No Frames"));
+        this._webSocketFramesSection = new WebInspector.DetailsSection("resource-websocket-frames", WebInspector.UIString("WebSocket Frames"));
+        this._webSocketFramesSection.groups = [new WebInspector.DetailsSectionGroup([this._webSocketFramesRow])];
+
         // Rows for the "Image Size" section.
         this._imageWidthRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Width"));
         this._imageHeightRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Height"));
@@ -156,6 +160,7 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
             this._resource.removeEventListener(WebInspector.Resource.Event.CacheStatusDidChange, this._refreshRequestAndResponse, this);
             this._resource.removeEventListener(WebInspector.Resource.Event.SizeDidChange, this._refreshDecodedSize, this);
             this._resource.removeEventListener(WebInspector.Resource.Event.TransferSizeDidChange, this._refreshTransferSize, this);
+            this._resource.removeEventListener(WebInspector.Resource.Event.WebSocketFrameWasAdded, this._refreshWebSocketFrames, this);
         }
 
         this._resource = resource;
@@ -169,6 +174,7 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
             this._resource.addEventListener(WebInspector.Resource.Event.CacheStatusDidChange, this._refreshRequestAndResponse, this);
             this._resource.addEventListener(WebInspector.Resource.Event.SizeDidChange, this._refreshDecodedSize, this);
             this._resource.addEventListener(WebInspector.Resource.Event.TransferSizeDidChange, this._refreshTransferSize, this);
+            this._resource.addEventListener(WebInspector.Resource.Event.WebSocketFrameWasAdded, this._refreshWebSocketFrames, this);
         }
 
         this.needsRefresh();
@@ -188,6 +194,7 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
         this._refreshRequestHeaders();
         this._refreshImageSizeSection();
         this._refreshRequestDataSection();
+        this._refreshWebSocketFrames();
     }
 
     // Private
@@ -470,4 +477,81 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
 
         this._requestDataSection.groups = [new WebInspector.DetailsSectionGroup(rows)];
     }
+
+    _refreshWebSocketFrames()
+    {
+        var resource = this._resource;
+
+        if (!resource)
+            return;
+
+        // Hide the section if we're not dealing with websocket.
+        if (resource.type !== WebInspector.Resource.Type.WebSocket) {
+            var webSocketFramesSectionElement = this._webSocketFramesSection.element;
+            if (webSocketFramesSectionElement.parentNode)
+                this.contentElement.removeChild(webSocketFramesSectionElement);
+            return;
+        }
+
+        this.contentElement.appendChild(this._webSocketFramesSection.element);
+
+        this._webSocketFramesRow.dataGrid = this._createWebSocketFramesDataGrid(this._resource.webSocketFrames);
+    }
+
+    _createWebSocketFramesDataGrid(data)
+    {
+        if (!data)
+            return null;
+
+        console.assert(data instanceof Array);
+        if (!data.length)
+            return null;
+
+        var dataGrid = new WebInspector.DataGrid({
+            data: {title: WebInspector.UIString("Data"), sortable: false},
+            size: {title: WebInspector.UIString("Size"), width: "15%", sortable: false},
+            time: {title: WebInspector.UIString("Time"), width: "30%",  sortable: true}
+        });
+
+        function addDataGridNode(frame)
+        {
+            console.assert(typeof frame.opcode === "number");
+            console.assert(typeof frame.mask === "boolean");
+            console.assert(typeof frame.isSent === "boolean");
+            console.assert(typeof frame.data === "string");
+            console.assert(typeof frame.size === "number");
+            console.assert(typeof frame.time === "number");
+
+            var nodeData = {};
+            if (frame.opcode === 2) {
+                nodeData.data = "Binary Frame (Opcode 2" + (frame.mask ? ", mask)" : ")");
+            } else {
+                nodeData.data = frame.data;
+            }
+            nodeData.size = WebInspector.UIString("%.0f B").format(frame.size);
+            nodeData.time = WebInspector.UIString("%.2fs").format(frame.time);
+
+            dataGrid.appendChild(new WebInspector.DataGridNode(nodeData, false));
+        }
+
+        for (var i = 0; i < data.length; ++i)
+            addDataGridNode(data[i]);
+
+        dataGrid.addEventListener(WebInspector.DataGrid.Event.SortChanged, sortDataGrid, this);
+
+        function sortDataGrid()
+        {
+            var sortColumnIdentifier = dataGrid.sortColumnIdentifier;
+
+            function comparator(a, b)
+            {
+                return parseFloat(a.data[sortColumnIdentifier]) - parseFloat(b.data[sortColumnIdentifier]);
+            }
+
+            dataGrid.sortNodes(comparator);
+        }
+
+        return dataGrid;
+    }
+
 };

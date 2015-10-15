@@ -668,7 +668,8 @@ WebInspector.Resource.Event = {
     TimestampsDidChange: "resource-timestamps-did-change",
     SizeDidChange: "resource-size-did-change",
     TransferSizeDidChange: "resource-transfer-size-did-change",
-    CacheStatusDidChange: "resource-cached-did-change"
+    CacheStatusDidChange: "resource-cached-did-change",
+    WebSocketFrameWasAdded: "resource-websocket-frame-was-added"
 };
 
 // Keep these in sync with the "ResourceType" enum defined by the "Page" domain.
