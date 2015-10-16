@@ -531,7 +531,19 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
             nodeData.size = WebInspector.UIString("%.0f B").format(frame.size);
             nodeData.time = WebInspector.UIString("%.2fs").format(frame.time);
 
-            dataGrid.appendChild(new WebInspector.DataGridNode(nodeData, false));
+            var node = new WebInspector.DataGridNode(nodeData, false);
+            dataGrid.appendChild(node);
+
+            // FIXME: background-color indicates that the frames were received
+            // or sent. Currently, DataGrid is located in Sidebar and it's too
+            // narrow, so there is no space to add a column of it.
+
+            // Editing element style of node should be after being appended to dataGrid.
+            if (frame.isSent) {
+                node.element.style.backgroundColor = "white";
+            } else {
+                node.element.style.backgroundColor = "hsl(214, 41%, 96%)";
+            }
         }
 
         for (var i = 0; i < data.length; ++i)
