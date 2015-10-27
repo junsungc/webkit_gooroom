@@ -380,7 +380,13 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
             }
         }
 
-        if (matchTextFilter(filterableData.text) && this.matchTreeElementAgainstFilterFunctions(treeElement, flags) && this.matchTreeElementAgainstCustomFilters(treeElement, flags)) {
+        if (treeElement instanceof WebInspector.WebProcessTreeElement) {
+            if (!treeElement.parent.hidden)
+                makeVisible();
+            return;
+        }
+
+        if (matchTextFilter(filterableData.text) && this.matchTreeElementAgainstFilterFunctions(treeElement, flags) && this.matchTreeElementAgainstCustomFilters(treeElement, flags)){
             // Make this element visible since it matches.
             makeVisible();
 

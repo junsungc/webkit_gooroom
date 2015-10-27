@@ -1833,6 +1833,7 @@ set(WebCore_SOURCES
     inspector/CommandLineAPIModule.cpp
     inspector/DOMEditor.cpp
     inspector/DOMPatchSupport.cpp
+    inspector/InspectorAccessAgent.cpp
     inspector/InspectorApplicationCacheAgent.cpp
     inspector/InspectorCSSAgent.cpp
     inspector/InspectorClient.cpp

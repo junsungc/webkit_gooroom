@@ -53,6 +53,8 @@ namespace WebCore {
 
 static HashSet<Worker*>* allWorkers;
 
+int WebCore::Worker::s_nextId = 0;
+
 void networkStateChanged(bool isOnLine)
 {
     for (auto& worker : *allWorkers)
@@ -63,6 +65,7 @@ inline Worker::Worker(ScriptExecutionContext& context)
     : ActiveDOMObject(&context)
     , m_contextProxy(WorkerGlobalScopeProxy::create(this))
 {
+    m_Id = s_nextId++;
     if (!allWorkers) {
         allWorkers = new HashSet<Worker*>;
         networkStateNotifier().addNetworkStateChangeListener(networkStateChanged);
@@ -102,6 +105,16 @@ Worker::~Worker()
     ASSERT(scriptExecutionContext()); // The context is protected by worker context proxy, so it cannot be destroyed while a Worker exists.
     allWorkers->remove(this);
     m_contextProxy->workerObjectDestroyed();
+}
+
+int Worker::id() const
+{
+    return m_Id;
+}
+
+const URL& Worker::url() const
+{
+    return m_scriptURL;
 }
 
 void Worker::postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort* port, ExceptionCode& ec)

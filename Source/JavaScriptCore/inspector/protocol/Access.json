@@ -1,0 +1,43 @@
+{
+    "domain": "Access",
+    "types": [],
+    "availability": "web",
+    "commands": [
+    ],
+    "events": [
+        {
+            "name": "didSendWorkerPermissionRequest",
+            "parameters": [
+                { "name": "workerId", "type": "integer" },
+                { "name": "url", "type": "string" }
+            ]
+        },
+        {
+            "name": "didReceiveWorkerPermissionResponse",
+            "parameters": [
+                { "name": "workerId", "type": "integer" },
+                { "name": "allowed", "type": "boolean" }
+            ]
+        },
+        {
+            "name": "didSendWebSocketPermissionRequest",
+            "parameters": [
+                { "name": "websocketId", "type": "integer" },
+                { "name": "url", "type": "string" }
+            ]
+        },
+        {
+            "name": "didReceiveWebSocketPermissionResponse",
+            "parameters": [
+                { "name": "websocketId", "type": "integer" },
+                { "name": "allowed", "type": "boolean" }
+            ]
+        },
+        {
+            "name": "didWebSocketClose",
+            "parameters": [
+                { "name": "websocketId", "type": "integer" }
+            ]
+        }
+    ]
+}

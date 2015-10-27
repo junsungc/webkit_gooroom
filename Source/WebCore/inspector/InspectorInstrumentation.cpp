@@ -40,6 +40,7 @@
 #include "DocumentLoader.h"
 #include "Event.h"
 #include "EventDispatcher.h"
+#include "InspectorAccessAgent.h"
 #include "InspectorApplicationCacheAgent.h"
 #include "InspectorController.h"
 #include "InspectorCSSAgent.h"
@@ -1052,6 +1053,24 @@ void InspectorInstrumentation::didSendWebSocketFrameImpl(InstrumentingAgents& in
     if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
         resourceAgent->didSendWebSocketFrame(identifier, frame);
 }
+
+void InspectorInstrumentation::didSendWebSocketPermissionRequestImpl(InstrumentingAgents& instrumentingAgents, int websocketId, const String& url)
+{
+    if (InspectorAccessAgent* accessAgent = instrumentingAgents.inspectorAccessAgent())
+        accessAgent->didSendWebSocketPermissionRequest(websocketId, url);
+}
+
+void InspectorInstrumentation::didReceiveWebSocketPermissionResponseImpl(InstrumentingAgents& instrumentingAgents, int websocketId, bool allowed)
+{
+    if (InspectorAccessAgent* accessAgent = instrumentingAgents.inspectorAccessAgent())
+        accessAgent->didReceiveWebSocketPermissionResponse(websocketId, allowed);
+}
+
+void InspectorInstrumentation::didWebSocketCloseImpl(InstrumentingAgents& instrumentingAgents, int websocketId)
+{
+    if (InspectorAccessAgent* accessAgent = instrumentingAgents.inspectorAccessAgent())
+        accessAgent->didWebSocketClose(websocketId);
+}
 #endif
 
 #if ENABLE(WEB_REPLAY)
@@ -1168,6 +1187,18 @@ bool InspectorInstrumentation::replayAgentEnabled(ScriptExecutionContext* script
     UNUSED_PARAM(scriptExecutionContext);
     return false;
 #endif
+}
+
+void InspectorInstrumentation::didSendWorkerPermissionRequestImpl(InstrumentingAgents& instrumentingAgents, int workerId, const String& url)
+{
+    if (InspectorAccessAgent* accessAgent = instrumentingAgents.inspectorAccessAgent())
+        accessAgent->didSendWorkerPermissionRequest(workerId, url);
+}
+
+void InspectorInstrumentation::didReceiveWorkerPermissionResponseImpl(InstrumentingAgents& instrumentingAgents, int workerId, bool allowed)
+{
+    if (InspectorAccessAgent* accessAgent = instrumentingAgents.inspectorAccessAgent())
+        accessAgent->didReceiveWorkerPermissionResponse(workerId, allowed);
 }
 
 void InspectorInstrumentation::pauseOnNativeEventIfNeeded(InstrumentingAgents& instrumentingAgents, bool isDOMEvent, const String& eventName, bool synchronous)

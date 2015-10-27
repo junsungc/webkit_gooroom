@@ -37,6 +37,7 @@
 #include <WebCore/FrameLoader.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/WebSocket.h>
+#include <WebCore/WebSocketController.h>
 
 using namespace WebCore;
 
@@ -86,11 +87,7 @@ void WebSocketPermissionRequestManager::didReceiveWebSocketPermissionDecision(ui
     if (!websocket)
         return;
     m_websocketToIDMap.remove(websocket);
-
-    if (allowed)
-        websocket->connect();
-    else
-        websocket->rejectConnect();
+    WebSocketController::from(websocket->document()->page())->receivePermissionDecision(websocket, allowed);
 }
 
 } // namespace WebKit

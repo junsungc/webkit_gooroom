@@ -23,47 +23,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WorkerController_h
-#define WorkerController_h
+WebInspector.WorkerAccess = class WorkerAccess extends WebInspector.Object
+{
+    constructor(id, scriptURL)
+    {
+        super();
+        this._id = id;
+        this._scriptURL = scriptURL;
+        this._permission = WebInspector.WorkerAccess.PermissionDecision.WAITING;
+    }
 
-#include "Page.h"
-#include "ViewStateChangeObserver.h"
-#include "Worker.h"
-#include <wtf/HashSet.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/RefPtr.h>
+    // Public
 
-namespace WebCore {
+    get id()
+    {
+        return this._id;
+    }
 
-class WorkerClient;
-class Page;
+    get scriptURL()
+    {
+        return this._scriptURL;
+    }
 
-class WorkerController : public Supplement<Page>, private ViewStateChangeObserver {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(WorkerController);
-public:
-    WorkerController(Page&, WorkerClient&);
-    ~WorkerController();
+    set permission(permission)
+    {
+        this._permission = permission;
+    }
 
-    void requestPermission(Worker*);
-    void cancelPermissionRequest(Worker*);
-
-    WorkerClient& client() { return m_client; }
-
-    WEBCORE_EXPORT static const char* supplementName();
-    static WorkerController* from(Page* page) { return static_cast<WorkerController*>(Supplement<Page>::from(page, supplementName())); }
-    void receivePermissionDecision(Worker*, bool allowed);
-
-private:
-    Page& m_page;
-    WorkerClient& m_client;
-
-    virtual void viewStateDidChange(ViewState::Flags oldViewState, ViewState::Flags newViewState) override;
-
-    // While the page is not visible, we pend permission requests.
-    HashSet<RefPtr<Worker>> m_pendedPermissionRequest;
+    get permission()
+    {
+        return this._permission;
+    }
 };
 
-} // namespace WebCore
+WebInspector.WorkerAccess.Event = {
+    WorkersUpdated: "worker-workers-updated"
+};
 
-#endif // WorkerController_h
+WebInspector.WorkerAccess.PermissionDecision = {
+    WAITING: "Waiting user's response",
+    ALLOWED: "Allowed by user",
+    REJECTED: "Rejected by user"
+};

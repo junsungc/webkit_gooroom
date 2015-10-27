@@ -23,47 +23,53 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WorkerController_h
-#define WorkerController_h
+WebInspector.WebProcess = class WebProcess extends WebInspector.Object
+{
+    constructor(pid, url, printer, usb, mic, speaker)
+    {
+        super();
+        this._pid = pid;
+        this._url = url;
+        this._printer = printer;
+        this._usb = usb;
+        this._mic = mic;
+        this._speaker = speaker;
+    }
 
-#include "Page.h"
-#include "ViewStateChangeObserver.h"
-#include "Worker.h"
-#include <wtf/HashSet.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/RefPtr.h>
+    // Public
 
-namespace WebCore {
+    get pid()
+    {
+        return this._pid;
+    }
 
-class WorkerClient;
-class Page;
+    set url(url)
+    {
+        this._url = url;
+    }
 
-class WorkerController : public Supplement<Page>, private ViewStateChangeObserver {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(WorkerController);
-public:
-    WorkerController(Page&, WorkerClient&);
-    ~WorkerController();
+    get url()
+    {
+        return this._url;
+    }
 
-    void requestPermission(Worker*);
-    void cancelPermissionRequest(Worker*);
+    get printer()
+    {
+        return this._printer;
+    }
 
-    WorkerClient& client() { return m_client; }
+    get usb()
+    {
+        return this._usb;
+    }
 
-    WEBCORE_EXPORT static const char* supplementName();
-    static WorkerController* from(Page* page) { return static_cast<WorkerController*>(Supplement<Page>::from(page, supplementName())); }
-    void receivePermissionDecision(Worker*, bool allowed);
+    get mic()
+    {
+        return this._mic;
+    }
 
-private:
-    Page& m_page;
-    WorkerClient& m_client;
-
-    virtual void viewStateDidChange(ViewState::Flags oldViewState, ViewState::Flags newViewState) override;
-
-    // While the page is not visible, we pend permission requests.
-    HashSet<RefPtr<Worker>> m_pendedPermissionRequest;
+    get speaker()
+    {
+        return this._speaker;
+    }
 };
-
-} // namespace WebCore
-
-#endif // WorkerController_h

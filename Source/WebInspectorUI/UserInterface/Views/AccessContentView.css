@@ -23,47 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WorkerController_h
-#define WorkerController_h
+.content-view.access > .data-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
 
-#include "Page.h"
-#include "ViewStateChangeObserver.h"
-#include "Worker.h"
-#include <wtf/HashSet.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/RefPtr.h>
+.content-view.access > .data-grid tr:matches(.duplicate-key, .missing-key) td.key-column,
+.content-view.access > .data-grid tr.missing-value td.value-column {
+    background-color: hsl(0, 100%, 96%);
+}
 
-namespace WebCore {
-
-class WorkerClient;
-class Page;
-
-class WorkerController : public Supplement<Page>, private ViewStateChangeObserver {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(WorkerController);
-public:
-    WorkerController(Page&, WorkerClient&);
-    ~WorkerController();
-
-    void requestPermission(Worker*);
-    void cancelPermissionRequest(Worker*);
-
-    WorkerClient& client() { return m_client; }
-
-    WEBCORE_EXPORT static const char* supplementName();
-    static WorkerController* from(Page* page) { return static_cast<WorkerController*>(Supplement<Page>::from(page, supplementName())); }
-    void receivePermissionDecision(Worker*, bool allowed);
-
-private:
-    Page& m_page;
-    WorkerClient& m_client;
-
-    virtual void viewStateDidChange(ViewState::Flags oldViewState, ViewState::Flags newViewState) override;
-
-    // While the page is not visible, we pend permission requests.
-    HashSet<RefPtr<Worker>> m_pendedPermissionRequest;
-};
-
-} // namespace WebCore
-
-#endif // WorkerController_h
+.content-view.access > .data-grid:focus tr.selected:matches(.duplicate-key, .missing-key) td.key-column,
+.content-view.access > .data-grid:focus tr.selected.missing-value td.value-column {
+    background-color: hsl(0, 42%, 76%);
+}

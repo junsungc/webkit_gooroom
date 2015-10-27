@@ -23,7 +23,6 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-
 #ifndef WebSocketController_h
 #define WebSocketController_h
 
@@ -50,6 +49,8 @@ public:
 
     void requestPermission(WebSocket*);
     void cancelPermissionRequest(WebSocket*);
+
+    void receivePermissionDecision(WebSocket*, bool allowed);
 
     WebSocketClient& client() { return m_client; }
 

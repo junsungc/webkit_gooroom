@@ -31,7 +31,9 @@ WebInspector.NewTabContentView = class NewTabContentView extends WebInspector.Ta
 
         super(identifier || "new-tab", "new-tab", tabBarItem);
 
+        // FIXME: Access.svg is temporary icon for access tab which was copied from Locked.svg.
         var allowedNewTabs = [
+            {image: "Images/Access.svg", title: WebInspector.UIString("Access"), type: WebInspector.AccessTabContentView.Type},
             {image: "Images/Console.svg", title: WebInspector.UIString("Console"), type: WebInspector.ConsoleTabContentView.Type},
             {image: "Images/Debugger.svg", title: WebInspector.UIString("Debugger"), type: WebInspector.DebuggerTabContentView.Type},
             {image: "Images/Elements.svg", title: WebInspector.UIString("Elements"), type: WebInspector.ElementsTabContentView.Type},

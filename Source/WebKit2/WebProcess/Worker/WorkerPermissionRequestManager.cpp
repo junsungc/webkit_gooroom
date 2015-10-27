@@ -36,6 +36,7 @@
 #include <WebCore/FrameLoader.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Worker.h>
+#include <WebCore/WorkerController.h>
 
 using namespace WebCore;
 
@@ -88,7 +89,7 @@ void WorkerPermissionRequestManager::didReceiveWorkerPermissionDecision(uint64_t
         return;
     m_workerToIDMap.remove(worker);
 
-    worker->notifyPermissionDecision(allowed);
+    WorkerController::from(downcast<Document>(worker->scriptExecutionContext())->page())->receivePermissionDecision(worker, allowed);
 }
 
 } // namespace WebKit

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Company 100, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -133,6 +134,12 @@ WebInspector.ContentView = class ContentView extends WebInspector.Object
         if (typeof representedObject === "string" || representedObject instanceof String)
             return new WebInspector.TextContentView(representedObject, extraArguments);
 
+        if (representedObject instanceof WebInspector.UIProcess)
+            return new WebInspector.AccessContentView(representedObject, extraArguments);
+
+        if (representedObject instanceof WebInspector.WebProcess)
+            return new WebInspector.AccessContentView(representedObject, extraArguments);
+
         console.assert(!WebInspector.ContentView.isViewable(representedObject));
 
         throw new Error("Can't make a ContentView for an unknown representedObject.");
@@ -175,6 +182,10 @@ WebInspector.ContentView = class ContentView extends WebInspector.Object
         if (representedObject instanceof WebInspector.LogObject)
             return true;
         if (representedObject instanceof WebInspector.ContentFlow)
+            return true;
+        if (representedObject instanceof WebInspector.UIProcess)
+            return true;
+        if (representedObject instanceof WebInspector.WebProcess)
             return true;
         if (typeof representedObject === "string" || representedObject instanceof String)
             return true;

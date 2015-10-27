@@ -90,6 +90,7 @@ public:
     void close(ExceptionCode& ec) { close(WebSocketChannel::CloseEventCodeNotSpecified, String(), ec); }
     void close(int code, ExceptionCode& ec) { close(code, String(), ec); }
 
+    int id() const;
     const URL& url() const;
     State readyState() const;
     unsigned long bufferedAmount() const;
@@ -150,6 +151,8 @@ private:
 
     State m_state;
     URL m_url;
+    static int s_nextId;
+    int m_Id;
     unsigned long m_bufferedAmount;
     unsigned long m_bufferedAmountAfterClose;
     BinaryType m_binaryType;

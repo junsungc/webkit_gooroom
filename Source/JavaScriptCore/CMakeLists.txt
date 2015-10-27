@@ -1046,6 +1046,7 @@ set(JavaScriptCore_INSPECTOR_PROTOCOL_SCRIPTS
 )
 
 set(JavaScriptCore_INSPECTOR_DOMAINS
+    ${JAVASCRIPTCORE_DIR}/inspector/protocol/Access.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/ApplicationCache.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/CSS.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Console.json

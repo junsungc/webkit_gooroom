@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_SOCKETS)
 
+#include "InspectorInstrumentation.h"
 #include "WebSocketClient.h"
 
 namespace WebCore {
@@ -54,6 +55,7 @@ void WebSocketController::requestPermission(WebSocket* websocket)
     }
 
     m_client.requestPermission(websocket);
+    InspectorInstrumentation::didSendWebSocketPermissionRequest(websocket->document(), websocket->id(), websocket->url().string());
 }
 
 void WebSocketController::cancelPermissionRequest(WebSocket* websocket)
@@ -74,6 +76,16 @@ void provideWebSocketTo(Page* page, WebSocketClient* client)
     ASSERT(page);
     ASSERT(client);
     Supplement<Page>::provideTo(page, WebSocketController::supplementName(), std::make_unique<WebSocketController>(*page, *client));
+}
+
+void WebSocketController::receivePermissionDecision(WebSocket* websocket, bool allowed)
+{
+    InspectorInstrumentation::didReceiveWebSocketPermissionResponse(websocket->document(), websocket->id(), allowed);
+
+    if (allowed)
+        websocket->connect();
+    else
+        websocket->rejectConnect();
 }
 
 } // namespace WebCore

@@ -45,6 +45,7 @@
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
+#include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "MessageEvent.h"
 #include "Page.h"
@@ -67,6 +68,7 @@
 namespace WebCore {
 
 const size_t maxReasonSizeInBytes = 123;
+int WebCore::WebSocket::s_nextId = 0;
 
 static inline bool isValidProtocolCharacter(UChar character)
 {
@@ -151,12 +153,18 @@ WebSocket::WebSocket(ScriptExecutionContext& context)
     , m_extensions("")
     , m_resumeTimer(*this, &WebSocket::resumeTimerFired)
 {
+    m_Id = s_nextId++;
 }
 
 WebSocket::~WebSocket()
 {
     if (m_channel)
         m_channel->disconnect();
+}
+
+int WebSocket::id() const
+{
+    return m_Id;
 }
 
 Ref<WebSocket> WebSocket::create(ScriptExecutionContext& context)
@@ -651,6 +659,7 @@ void WebSocket::didStartClosingHandshake()
 
 void WebSocket::didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus closingHandshakeCompletion, unsigned short code, const String& reason)
 {
+    InspectorInstrumentation::didWebSocketClose(downcast<Document>(scriptExecutionContext()), id());
     LOG(Network, "WebSocket %p didClose()", this);
     if (!m_channel)
         return;

@@ -35,6 +35,7 @@
 #include "CommandLineAPIHost.h"
 #include "DOMWrapperWorld.h"
 #include "GraphicsContext.h"
+#include "InspectorAccessAgent.h"
 #include "InspectorApplicationCacheAgent.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorClient.h"
@@ -160,6 +161,7 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     m_agents.append(std::make_unique<InspectorApplicationCacheAgent>(m_instrumentingAgents.get(), pageAgent));
     m_agents.append(std::make_unique<InspectorWorkerAgent>(m_instrumentingAgents.get()));
     m_agents.append(std::make_unique<InspectorLayerTreeAgent>(m_instrumentingAgents.get()));
+    m_agents.append(std::make_unique<InspectorAccessAgent>(m_instrumentingAgents.get()));
 
     ASSERT(m_injectedScriptManager->commandLineAPIHost());
     if (CommandLineAPIHost* commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost()) {

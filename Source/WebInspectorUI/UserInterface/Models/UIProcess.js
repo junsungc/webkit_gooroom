@@ -23,47 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WorkerController_h
-#define WorkerController_h
+WebInspector.UIProcess = class UIProcess extends WebInspector.Object
+{
+    constructor(pid, authority)
+    {
+        super();
+        this._pid = pid;
+        this._authority = authority;
+        this._webProcesses = [];
+    }
 
-#include "Page.h"
-#include "ViewStateChangeObserver.h"
-#include "Worker.h"
-#include <wtf/HashSet.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/RefPtr.h>
+    // Public
 
-namespace WebCore {
+    addWebProcess(pid, url, printer, usb, mic, speaker)
+    {
+        this._webProcesses.push(new WebInspector.WebProcess(pid, url, printer, usb, mic, speaker));
+        this.dispatchEventToListeners(WebInspector.UIProcess.Event.UIProcessUpdated);
+    }
 
-class WorkerClient;
-class Page;
+    get authority()
+    {
+        return this._authority;
+    }
 
-class WorkerController : public Supplement<Page>, private ViewStateChangeObserver {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(WorkerController);
-public:
-    WorkerController(Page&, WorkerClient&);
-    ~WorkerController();
+    get pid()
+    {
+        return this._pid;
+    }
 
-    void requestPermission(Worker*);
-    void cancelPermissionRequest(Worker*);
-
-    WorkerClient& client() { return m_client; }
-
-    WEBCORE_EXPORT static const char* supplementName();
-    static WorkerController* from(Page* page) { return static_cast<WorkerController*>(Supplement<Page>::from(page, supplementName())); }
-    void receivePermissionDecision(Worker*, bool allowed);
-
-private:
-    Page& m_page;
-    WorkerClient& m_client;
-
-    virtual void viewStateDidChange(ViewState::Flags oldViewState, ViewState::Flags newViewState) override;
-
-    // While the page is not visible, we pend permission requests.
-    HashSet<RefPtr<Worker>> m_pendedPermissionRequest;
+    get webProcesses()
+    {
+        return this._webProcesses;
+    }
 };
 
-} // namespace WebCore
-
-#endif // WorkerController_h
+WebInspector.UIProcess.Event = {
+    UIProcessUpdated: "uiProcess-uiProcess-updated"
+};

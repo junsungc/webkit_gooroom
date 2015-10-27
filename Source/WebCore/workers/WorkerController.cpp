@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WorkerController.h"
 
+#include "InspectorInstrumentation.h"
 #include "WorkerClient.h"
 
 namespace WebCore {
@@ -48,6 +49,7 @@ void WorkerController::requestPermission(Worker* worker)
         return;
     }
 
+    InspectorInstrumentation::didSendWorkerPermissionRequest(worker->scriptExecutionContext(), worker->id(), worker->url().string());
     m_client.requestPermission(worker);
 }
 
@@ -79,6 +81,12 @@ void provideWorkerTo(Page* page, WorkerClient* client)
     ASSERT(page);
     ASSERT(client);
     Supplement<Page>::provideTo(page, WorkerController::supplementName(), std::make_unique<WorkerController>(*page, *client));
+}
+
+void WorkerController::receivePermissionDecision(Worker* worker, bool allowed)
+{
+    worker->notifyPermissionDecision(allowed);
+    InspectorInstrumentation::didReceiveWorkerPermissionResponse(worker->scriptExecutionContext(), worker->id(), allowed);
 }
 
 } // namespace WebCore

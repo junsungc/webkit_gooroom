@@ -23,47 +23,59 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WorkerController_h
-#define WorkerController_h
+WebInspector.WebSocketAccess = class WebSocketAccess extends WebInspector.Object
+{
+    constructor(id, url)
+    {
+        super();
+        this._id = id;
+        this._url = url;
+        this._state = WebInspector.WebSocketAccess.State.CONNECTING;
+        this._permission = WebInspector.WebSocketAccess.PermissionDecision.WAITING;
+    }
 
-#include "Page.h"
-#include "ViewStateChangeObserver.h"
-#include "Worker.h"
-#include <wtf/HashSet.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/RefPtr.h>
+    // Public
 
-namespace WebCore {
+    get id()
+    {
+        return this._id;
+    }
 
-class WorkerClient;
-class Page;
+    get url()
+    {
+        return this._url;
+    }
 
-class WorkerController : public Supplement<Page>, private ViewStateChangeObserver {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(WorkerController);
-public:
-    WorkerController(Page&, WorkerClient&);
-    ~WorkerController();
+    set state(state)
+    {
+        this._state = state;
+    }
 
-    void requestPermission(Worker*);
-    void cancelPermissionRequest(Worker*);
+    get state()
+    {
+        return this._state;
+    }
 
-    WorkerClient& client() { return m_client; }
+    set permission(permission)
+    {
+        this._permission = permission;
+    }
 
-    WEBCORE_EXPORT static const char* supplementName();
-    static WorkerController* from(Page* page) { return static_cast<WorkerController*>(Supplement<Page>::from(page, supplementName())); }
-    void receivePermissionDecision(Worker*, bool allowed);
-
-private:
-    Page& m_page;
-    WorkerClient& m_client;
-
-    virtual void viewStateDidChange(ViewState::Flags oldViewState, ViewState::Flags newViewState) override;
-
-    // While the page is not visible, we pend permission requests.
-    HashSet<RefPtr<Worker>> m_pendedPermissionRequest;
+    get permission()
+    {
+        return this._permission;
+    }
 };
 
-} // namespace WebCore
+WebInspector.WebSocketAccess.PermissionDecision = {
+    WAITING: "Waiting user's response",
+    ALLOWED: "Allowed by user",
+    REJECTED: "Rejected by user"
+};
 
-#endif // WorkerController_h
+WebInspector.WebSocketAccess.State = {
+    CONNECTING: "CONNECTING",
+    OPEN: "OPEN",
+    CLOSING: "CLOSING",
+    CLOSED: "CLOSED"
+};

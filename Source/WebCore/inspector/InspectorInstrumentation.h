@@ -265,12 +265,18 @@ public:
     static void didReceiveWebSocketFrame(Document*, unsigned long identifier, const WebSocketFrame&);
     static void didSendWebSocketFrame(Document*, unsigned long identifier, const WebSocketFrame&);
     static void didReceiveWebSocketFrameError(Document*, unsigned long identifier, const String& errorMessage);
+    static void didSendWebSocketPermissionRequest(Document*, int websocketId, const String& url);
+    static void didReceiveWebSocketPermissionResponse(Document*, int websocketId, bool allowed);
+    static void didWebSocketClose(Document*, int websocketId);
 #endif
 
     static Deprecated::ScriptObject wrapCanvas2DRenderingContextForInstrumentation(Document*, const Deprecated::ScriptObject&);
 #if ENABLE(WEBGL)
     static Deprecated::ScriptObject wrapWebGLRenderingContextForInstrumentation(Document*, const Deprecated::ScriptObject&);
 #endif
+
+    static void didSendWorkerPermissionRequest(ScriptExecutionContext*, int workerId, const String& url);
+    static void didReceiveWorkerPermissionResponse(ScriptExecutionContext*, int workerId, bool allowed);
 
     static void networkStateChanged(Page*);
     static void updateApplicationCacheStatus(Frame*);
@@ -445,7 +451,13 @@ private:
     static void didReceiveWebSocketFrameImpl(InstrumentingAgents&, unsigned long identifier, const WebSocketFrame&);
     static void didSendWebSocketFrameImpl(InstrumentingAgents&, unsigned long identifier, const WebSocketFrame&);
     static void didReceiveWebSocketFrameErrorImpl(InstrumentingAgents&, unsigned long identifier, const String&);
+    static void didSendWebSocketPermissionRequestImpl(InstrumentingAgents&, int websocketId, const String& url);
+    static void didReceiveWebSocketPermissionResponseImpl(InstrumentingAgents&, int websocketId, const bool allowed);
+    static void didWebSocketCloseImpl(InstrumentingAgents&, int websocketId);
 #endif
+
+    static void didSendWorkerPermissionRequestImpl(InstrumentingAgents&, int workerId, const String& url);
+    static void didReceiveWorkerPermissionResponseImpl(InstrumentingAgents&, int workerId, bool allowed);
 
     static void networkStateChangedImpl(InstrumentingAgents&);
     static void updateApplicationCacheStatusImpl(InstrumentingAgents&, Frame*);
@@ -1187,6 +1199,27 @@ inline void InspectorInstrumentation::didSendWebSocketFrame(Document* document, 
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
         didSendWebSocketFrameImpl(*instrumentingAgents, identifier, frame);
 }
+
+inline void InspectorInstrumentation::didSendWebSocketPermissionRequest(Document* document, int websocketId, const String& url)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
+        didSendWebSocketPermissionRequestImpl(*instrumentingAgents, websocketId, url);
+}
+
+inline void InspectorInstrumentation::didReceiveWebSocketPermissionResponse(Document* document, int websocketId, bool allowed)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
+        didReceiveWebSocketPermissionResponseImpl(*instrumentingAgents, websocketId, allowed);
+}
+
+inline void InspectorInstrumentation::didWebSocketClose(Document* document, int websocketId)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
+        didWebSocketCloseImpl(*instrumentingAgents, websocketId);
+}
 #endif // ENABLE(WEB_SOCKETS)
 
 #if ENABLE(WEB_REPLAY)
@@ -1281,6 +1314,20 @@ inline void InspectorInstrumentation::playbackHitPosition(Page& page, const Repl
         playbackHitPositionImpl(*instrumentingAgents, position);
 }
 #endif // ENABLE(WEB_REPLAY)
+
+inline void InspectorInstrumentation::didSendWorkerPermissionRequest(ScriptExecutionContext* context, int workerId, const String& url)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
+        didSendWorkerPermissionRequestImpl(*instrumentingAgents, workerId, url);
+}
+
+inline void InspectorInstrumentation::didReceiveWorkerPermissionResponse(ScriptExecutionContext* context, int workerId, bool allowed)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
+        didReceiveWorkerPermissionResponseImpl(*instrumentingAgents, workerId, allowed);
+}
 
 inline void InspectorInstrumentation::networkStateChanged(Page* page)
 {

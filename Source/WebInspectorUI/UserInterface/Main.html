@@ -30,6 +30,8 @@
 
     <link rel="stylesheet" href="External/CodeMirror/codemirror.css">
 
+    <link rel="stylesheet" href="Views/AccessSidebarPanel.css">
+    <link rel="stylesheet" href="Views/AccessContentView.css">
     <link rel="stylesheet" href="Views/ApplicationCacheFrameContentView.css">
     <link rel="stylesheet" href="Views/ApplicationCacheIcons.css">
     <link rel="stylesheet" href="Views/BezierEditor.css">
@@ -117,6 +119,7 @@
     <link rel="stylesheet" href="Views/Popover.css">
     <link rel="stylesheet" href="Views/ProbeDetailsSidebarPanel.css">
     <link rel="stylesheet" href="Views/ProbeSetDataGrid.css">
+    <link rel="stylesheet" href="Views/ProcessIcon.css">
     <link rel="stylesheet" href="Views/QuickConsole.css">
     <link rel="stylesheet" href="Views/RadioButtonNavigationItem.css">
     <link rel="stylesheet" href="Views/RenderingFrameTimelineOverviewGraph.css">
@@ -163,6 +166,8 @@
     <link rel="stylesheet" href="Views/TypeTokenView.css">
     <link rel="stylesheet" href="Views/TypeTreeElement.css">
     <link rel="stylesheet" href="Views/TypeTreeView.css">
+    <link rel="stylesheet" href="Views/WebSocketDetailsSidebarPanel.css">
+    <link rel="stylesheet" href="Views/WorkerDetailsSidebarPanel.css">
 
     <link rel="stylesheet" href="Controllers/CodeMirrorCompletionController.css">
     <link rel="stylesheet" href="Controllers/CodeMirrorDragToAdjustNumberController.css">
@@ -205,6 +210,7 @@
     <script src="Base/URLUtilities.js"></script>
     <script src="Base/Utilities.js"></script>
 
+    <script src="Protocol/AccessObserver.js"></script>
     <script src="Protocol/ApplicationCacheObserver.js"></script>
     <script src="Protocol/CSSObserver.js"></script>
     <script src="Protocol/ConsoleObserver.js"></script>
@@ -317,6 +323,10 @@
     <script src="Models/TimelineRecording.js"></script>
     <script src="Models/TypeDescription.js"></script>
     <script src="Models/TypeSet.js"></script>
+    <script src="Models/UIProcess.js"></script>
+    <script src="Models/WebProcess.js"></script>
+    <script src="Models/WebSocketAccess.js"></script>
+    <script src="Models/WorkerAccess.js"></script>
     <script src="Models/WrappedPromise.js"></script>
 
     <script src="Views/ConsoleCommandView.js"></script>
@@ -336,6 +346,7 @@
     <script src="Views/TimelineView.js"></script>
     <script src="Views/TreeOutline.js"></script>
 
+    <script src="Views/AccessContentView.js"></script>
     <script src="Views/ButtonNavigationItem.js"></script>
     <script src="Views/DOMTreeContentView.js"></script>
     <script src="Views/DetailsSidebarPanel.js"></script>
@@ -353,11 +364,15 @@
     <script src="Views/NetworkTabContentView.js"></script>
     <script src="Views/NewTabContentView.js"></script>
     <script src="Views/ObjectTreeBaseTreeElement.js"></script>
+    <script src="Views/ProcessTreeElement.js"></script>
     <script src="Views/SourceCodeTreeElement.js"></script>
     <script src="Views/StorageTreeElement.js"></script>
     <script src="Views/TimelineOverview.js"></script>
     <script src="Views/TimelineRecordTreeElement.js"></script>
+    <script src="Views/WebSocketDetailsSidebarPanel.js"></script>
+    <script src="Views/WorkerDetailsSidebarPanel.js"></script>
 
+    <script src="Views/AccessTabContentView.js"></script>
     <script src="Views/ConsoleTabContentView.js"></script>
     <script src="Views/DebuggerTabContentView.js"></script>
     <script src="Views/DebuggerTreeElement.js"></script>
@@ -368,6 +383,8 @@
     <script src="Views/SettingsTabContentView.js"></script>
     <script src="Views/StorageTabContentView.js"></script>
     <script src="Views/TimelineTabContentView.js"></script>
+    <script src="Views/UIProcessTreeElement.js"></script>
+    <script src="Views/WebProcessTreeElement.js"></script>
 
     <script src="Views/DetailsSection.js"></script>
     <script src="Views/DetailsSectionDataGridRow.js"></script>
@@ -376,6 +393,8 @@
     <script src="Views/DetailsSectionSimpleRow.js"></script>
     <script src="Views/DetailsSectionTextRow.js"></script>
 
+    <script src="Views/AccessContentView.js"></script>
+    <script src="Views/AccessSidebarPanel.js"></script>
     <script src="Views/ActivateButtonNavigationItem.js"></script>
     <script src="Views/ActivateButtonToolbarItem.js"></script>
     <script src="Views/ApplicationCacheDetailsSidebarPanel.js"></script>
@@ -540,10 +559,13 @@
     <script src="Views/TypeTokenView.js"></script>
     <script src="Views/TypeTreeElement.js"></script>
     <script src="Views/TypeTreeView.js"></script>
-
+    <script src="Views/WebSocketDetailsSection.js"></script>
+    <script src="Views/WorkerDetailsSection.js"></script>
+    
     <script src="Controllers/Annotator.js"></script>
     <script src="Controllers/CodeMirrorEditingController.js"></script>
 
+    <script src="Controllers/AccessManager.js"></script>
     <script src="Controllers/AnalyzerManager.js"></script>
     <script src="Controllers/ApplicationCacheManager.js"></script>
     <script src="Controllers/BasicBlockAnnotator.js"></script>

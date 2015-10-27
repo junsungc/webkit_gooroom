@@ -84,6 +84,8 @@ WebInspector.loaded = function()
         InspectorBackend.registerRuntimeDispatcher(new WebInspector.RuntimeObserver);
     if (InspectorBackend.registerReplayDispatcher)
         InspectorBackend.registerReplayDispatcher(new WebInspector.ReplayObserver);
+    if (InspectorBackend.registerAccessDispatcher)
+        InspectorBackend.registerAccessDispatcher(new WebInspector.AccessObserver);
 
     // Enable agents.
     if (window.InspectorAgent)
@@ -116,6 +118,7 @@ WebInspector.loaded = function()
     this.dashboardManager = new WebInspector.DashboardManager;
     this.probeManager = new WebInspector.ProbeManager;
     this.replayManager = new WebInspector.ReplayManager;
+    this.accessManager = new WebInspector.AccessManager;
 
     // Enable the Console Agent after creating the singleton managers.
     if (window.ConsoleAgent)
@@ -325,6 +328,8 @@ WebInspector.contentLoaded = function()
     this.cssStyleDetailsSidebarPanel = new WebInspector.CSSStyleDetailsSidebarPanel;
     this.applicationCacheDetailsSidebarPanel = new WebInspector.ApplicationCacheDetailsSidebarPanel;
     this.scopeChainDetailsSidebarPanel = new WebInspector.ScopeChainDetailsSidebarPanel;
+    this.websocketDetailsSidebarPanel = new WebInspector.WebSocketDetailsSidebarPanel;
+    this.workerDetailsSidebarPanel = new WebInspector.WorkerDetailsSidebarPanel;
     this.probeDetailsSidebarPanel = new WebInspector.ProbeDetailsSidebarPanel;
 
     if (window.LayerTreeAgent)
@@ -402,6 +407,8 @@ WebInspector.isTabTypeAllowed = function(tabType)
 WebInspector._tabContentViewForType = function(tabType)
 {
     switch (tabType) {
+    case WebInspector.AccessTabContentView.Type:
+        return new WebInspector.AccessTabContentView;
     case WebInspector.ConsoleTabContentView.Type:
         return new WebInspector.ConsoleTabContentView;
     case WebInspector.DebuggerTabContentView.Type:
@@ -918,6 +925,9 @@ WebInspector.tabContentViewClassForRepresentedObject = function(representedObjec
         representedObject instanceof WebInspector.ApplicationCacheFrame || representedObject instanceof WebInspector.IndexedDatabaseObjectStore ||
         representedObject instanceof WebInspector.IndexedDatabaseObjectStoreIndex)
         return WebInspector.ResourcesTabContentView;
+
+    if (representedObject instanceof WebInspector.UIProcess || representedObject instanceof WebInspector.WebProcess)
+        return WebInspector.AccessTabContentView;
 
     return null;
 };

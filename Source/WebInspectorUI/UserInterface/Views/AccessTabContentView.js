@@ -23,47 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WorkerController_h
-#define WorkerController_h
+WebInspector.AccessTabContentView = class AccessTabContentView extends WebInspector.ContentBrowserTabContentView
+{
+    constructor(identifier)
+    {
+        // FIXME: Access.svg is temporary icon for access tab which was copied from Locked.svg.
+        var tabBarItem = new WebInspector.TabBarItem("Images/Access.svg", WebInspector.UIString("Access"));
+        var detailsSidebarPanels = [WebInspector.websocketDetailsSidebarPanel, WebInspector.workerDetailsSidebarPanel];
 
-#include "Page.h"
-#include "ViewStateChangeObserver.h"
-#include "Worker.h"
-#include <wtf/HashSet.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/RefPtr.h>
+        super(identifier || "access", "access", tabBarItem, WebInspector.AccessSidebarPanel, detailsSidebarPanels);
+    }
 
-namespace WebCore {
+    // Public
 
-class WorkerClient;
-class Page;
+    get type()
+    {
+        return WebInspector.AccessTabContentView.Type;
+    }
 
-class WorkerController : public Supplement<Page>, private ViewStateChangeObserver {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(WorkerController);
-public:
-    WorkerController(Page&, WorkerClient&);
-    ~WorkerController();
+    canShowRepresentedObject(representedObject)
+    {
+       return representedObject instanceof WebInspector.UIProcess || representedObject instanceof WebInspector.WebProcess;
+    }
 
-    void requestPermission(Worker*);
-    void cancelPermissionRequest(Worker*);
-
-    WorkerClient& client() { return m_client; }
-
-    WEBCORE_EXPORT static const char* supplementName();
-    static WorkerController* from(Page* page) { return static_cast<WorkerController*>(Supplement<Page>::from(page, supplementName())); }
-    void receivePermissionDecision(Worker*, bool allowed);
-
-private:
-    Page& m_page;
-    WorkerClient& m_client;
-
-    virtual void viewStateDidChange(ViewState::Flags oldViewState, ViewState::Flags newViewState) override;
-
-    // While the page is not visible, we pend permission requests.
-    HashSet<RefPtr<Worker>> m_pendedPermissionRequest;
 };
 
-} // namespace WebCore
-
-#endif // WorkerController_h
+WebInspector.AccessTabContentView.Type = "access";

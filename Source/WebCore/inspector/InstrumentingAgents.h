@@ -45,6 +45,7 @@ class InspectorDebuggerAgent;
 
 namespace WebCore {
 
+class InspectorAccessAgent;
 class InspectorApplicationCacheAgent;
 class InspectorCSSAgent;
 class InspectorDOMAgent;
@@ -136,6 +137,9 @@ public:
     InspectorLayerTreeAgent* inspectorLayerTreeAgent() const { return m_inspectorLayerTreeAgent; }
     void setInspectorLayerTreeAgent(InspectorLayerTreeAgent* agent) { m_inspectorLayerTreeAgent = agent; }
 
+    InspectorAccessAgent* inspectorAccessAgent() const { return m_inspectorAccessAgent; }
+    void setInspectorAccessAgent(InspectorAccessAgent* agent) { m_inspectorAccessAgent = agent; }
+
 private:
     InstrumentingAgents(Inspector::InspectorEnvironment&);
 
@@ -161,7 +165,8 @@ private:
     Inspector::InspectorDebuggerAgent* m_inspectorDebuggerAgent;
     PageDebuggerAgent* m_pageDebuggerAgent;
     InspectorDOMDebuggerAgent* m_inspectorDOMDebuggerAgent;
-    InspectorWorkerAgent* m_inspectorWorkerAgent;
+    InspectorWorkerAgent* m_inspectorWorkerAgent { nullptr };
+    InspectorAccessAgent* m_inspectorAccessAgent { nullptr };
 };
 
 }

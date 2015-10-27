@@ -54,6 +54,9 @@ public:
     static RefPtr<Worker> create(ScriptExecutionContext&, const String& url, ExceptionCode&);
     virtual ~Worker();
 
+    int id() const;
+    const URL& url() const;
+
     virtual EventTargetInterface eventTargetInterface() const override { return WorkerEventTargetInterfaceType; }
 
     void postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray*, ExceptionCode&);
@@ -92,6 +95,8 @@ private:
     WorkerGlobalScopeProxy* m_contextProxy; // The proxy outlives the worker to perform thread shutdown.
 
     URL m_scriptURL;
+    static int s_nextId;
+    int m_Id;
 };
 
 } // namespace WebCore

@@ -23,47 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WorkerController_h
-#define WorkerController_h
+WebInspector.WorkerDetailsSidebarPanel = class WorkerDetailsSidebarPanel extends WebInspector.DetailsSidebarPanel
+{
+    constructor(identifier, displayName, singularDisplayName)
+    {
+        identifier = "Worker";
+        displayName = "Worker";
+        super(identifier, displayName, displayName);
+        var workerSection = new WebInspector.WorkerDetailsSection(identifier, displayName);
+        this.contentElement.appendChild(workerSection.element);
+    }
 
-#include "Page.h"
-#include "ViewStateChangeObserver.h"
-#include "Worker.h"
-#include <wtf/HashSet.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/RefPtr.h>
+    // Public
 
-namespace WebCore {
-
-class WorkerClient;
-class Page;
-
-class WorkerController : public Supplement<Page>, private ViewStateChangeObserver {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(WorkerController);
-public:
-    WorkerController(Page&, WorkerClient&);
-    ~WorkerController();
-
-    void requestPermission(Worker*);
-    void cancelPermissionRequest(Worker*);
-
-    WorkerClient& client() { return m_client; }
-
-    WEBCORE_EXPORT static const char* supplementName();
-    static WorkerController* from(Page* page) { return static_cast<WorkerController*>(Supplement<Page>::from(page, supplementName())); }
-    void receivePermissionDecision(Worker*, bool allowed);
-
-private:
-    Page& m_page;
-    WorkerClient& m_client;
-
-    virtual void viewStateDidChange(ViewState::Flags oldViewState, ViewState::Flags newViewState) override;
-
-    // While the page is not visible, we pend permission requests.
-    HashSet<RefPtr<Worker>> m_pendedPermissionRequest;
+    inspect(objects)
+    {
+        return true;
+    }
 };
-
-} // namespace WebCore
-
-#endif // WorkerController_h
