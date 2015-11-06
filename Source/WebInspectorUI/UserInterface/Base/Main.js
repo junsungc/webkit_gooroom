@@ -456,7 +456,7 @@ WebInspector._updateNewTabButtonState = function(event)
     var newTabAllowed = this.isNewTabWithTypeAllowed(WebInspector.ConsoleTabContentView.Type) || this.isNewTabWithTypeAllowed(WebInspector.ElementsTabContentView.Type)
         || this.isNewTabWithTypeAllowed(WebInspector.ResourcesTabContentView.Type) || this.isNewTabWithTypeAllowed(WebInspector.StorageTabContentView.Type)
         || this.isNewTabWithTypeAllowed(WebInspector.TimelineTabContentView.Type) || this.isNewTabWithTypeAllowed(WebInspector.DebuggerTabContentView.Type)
-        || this.isNewTabWithTypeAllowed(WebInspector.NetworkTabContentView.Type);
+        || this.isNewTabWithTypeAllowed(WebInspector.NetworkTabContentView.Type) || this.isNewTabWithTypeAllowed(WebInspector.AccessTabContentView.Type);
     this.tabBar.newTabItem.disabled = !newTabAllowed;
 };
 
