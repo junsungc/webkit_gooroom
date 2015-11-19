@@ -29,6 +29,7 @@ messages -> NetworkResourceLoader LegacyReceiver {
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     ContinueCanAuthenticateAgainstProtectionSpace(bool canAuthenticate)
 #endif
+    ContinueCanAccessURL(bool canAccess)
 }
 
 #endif // ENABLE(NETWORK_PROCESS)

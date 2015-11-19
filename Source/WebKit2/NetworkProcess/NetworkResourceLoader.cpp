@@ -133,36 +133,38 @@ void NetworkResourceLoader::start()
         return;
 
     m_currentRequest = originalRequest();
-
+    // FIXME: Is it needed to protect this object with RefPtr?
+    canAccessURLAsync([this]() {
 #if ENABLE(NETWORK_CACHE)
-    if (!NetworkCache::singleton().isEnabled() || sessionID().isEphemeral() || !originalRequest().url().protocolIsInHTTPFamily()) {
-        startNetworkLoad();
-        return;
-    }
+        if (!NetworkCache::singleton().isEnabled() || sessionID().isEphemeral() || !originalRequest().url().protocolIsInHTTPFamily()) {
+            startNetworkLoad();
+            return;
+        }
 
-    RefPtr<NetworkResourceLoader> loader(this);
-    NetworkCache::singleton().retrieve(originalRequest(), m_parameters.webPageID, [loader](std::unique_ptr<NetworkCache::Entry> entry) {
-        if (loader->hasOneRef()) {
-            // The loader has been aborted and is only held alive by this lambda.
-            return;
-        }
-        if (!entry) {
-            loader->startNetworkLoad();
-            return;
-        }
-        if (loader->m_parameters.needsCertificateInfo && !entry->response().containsCertificateInfo()) {
-            loader->startNetworkLoad();
-            return;
-        }
-        if (entry->needsValidation()) {
-            loader->validateCacheEntry(WTF::move(entry));
-            return;
-        }
-        loader->didRetrieveCacheEntry(WTF::move(entry));
-    });
+        RefPtr<NetworkResourceLoader> loader(this);
+        NetworkCache::singleton().retrieve(originalRequest(), m_parameters.webPageID, [loader](std::unique_ptr<NetworkCache::Entry> entry) {
+            if (loader->hasOneRef()) {
+                // The loader has been aborted and is only held alive by this lambda.
+                return;
+            }
+            if (!entry) {
+                loader->startNetworkLoad();
+                return;
+            }
+            if (loader->m_parameters.needsCertificateInfo && !entry->response().containsCertificateInfo()) {
+                loader->startNetworkLoad();
+                return;
+            }
+            if (entry->needsValidation()) {
+                loader->validateCacheEntry(WTF::move(entry));
+                return;
+            }
+            loader->didRetrieveCacheEntry(WTF::move(entry));
+        });
 #else
-    startNetworkLoad();
+        startNetworkLoad();
 #endif
+    });
 }
 
 void NetworkResourceLoader::startNetworkLoad()
@@ -409,23 +411,51 @@ void NetworkResourceLoader::willSendRequestAsync(ResourceHandle* handle, const R
     ASSERT(RunLoop::isMain());
 
     m_currentRequest = request;
-
+    // FIXME: Is it needed to protect this object with RefPtr?
+    canAccessURLAsync([this, redirectResponse]() {
 #if ENABLE(NETWORK_CACHE)
-    WebCore::updateRedirectChainStatus(m_redirectChainCacheStatus, redirectResponse);
+        WebCore::updateRedirectChainStatus(m_redirectChainCacheStatus, redirectResponse);
 #endif
 
-    if (isSynchronous()) {
-        // FIXME: This needs to be fixed to follow the redirect correctly even for cross-domain requests.
-        // This includes at least updating host records, and comparing the current request instead of the original request here.
-        if (!protocolHostAndPortAreEqual(originalRequest().url(), m_currentRequest.url())) {
-            ASSERT(m_synchronousLoadData->error.isNull());
-            m_synchronousLoadData->error = SynchronousLoaderClient::platformBadResponseError();
-            m_currentRequest = ResourceRequest();
+        if (isSynchronous()) {
+            // FIXME: This needs to be fixed to follow the redirect correctly even for cross-domain requests.
+            // This includes at least updating host records, and comparing the current request instead of the original request here.
+            if (!protocolHostAndPortAreEqual(originalRequest().url(), m_currentRequest.url())) {
+                ASSERT(m_synchronousLoadData->error.isNull());
+                m_synchronousLoadData->error = SynchronousLoaderClient::platformBadResponseError();
+                m_currentRequest = ResourceRequest();
+            }
+            continueWillSendRequest(m_currentRequest);
+            return;
         }
-        continueWillSendRequest(m_currentRequest);
+        sendAbortingOnFailure(Messages::WebResourceLoader::WillSendRequest(m_currentRequest, redirectResponse));
+    });
+}
+
+void NetworkResourceLoader::canAccessURLAsync(std::function<void()>&& callback)
+{
+    ASSERT(callback);
+    ASSERT(!m_canAccessURLCallback);
+
+    m_canAccessURLCallback = callback;
+
+    bool isRequesterMain = m_currentRequest.requester() == WebCore::ResourceRequest::Requester::Main;
+    sendAbortingOnFailure(Messages::WebResourceLoader::CanAccessURL(m_currentRequest.url(), isRequesterMain, m_parameters.webFrameID));
+}
+
+void NetworkResourceLoader::continueCanAccessURL(bool result)
+{
+    ASSERT(m_canAccessURLCallback);
+
+    if (!result) {
+        // FIXME: Should call m_handle->cancel()?
+        // FIXME: cancelledError isn't a proper one.
+        didFail(m_handle.get(), cancelledError(m_currentRequest));
         return;
     }
-    sendAbortingOnFailure(Messages::WebResourceLoader::WillSendRequest(m_currentRequest, redirectResponse));
+
+    m_canAccessURLCallback();
+    m_canAccessURLCallback = nullptr;
 }
 
 void NetworkResourceLoader::continueWillSendRequest(const ResourceRequest& newRequest)

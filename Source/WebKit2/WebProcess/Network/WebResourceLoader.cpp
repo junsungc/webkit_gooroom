@@ -224,6 +224,14 @@ void WebResourceLoader::canAuthenticateAgainstProtectionSpace(const ProtectionSp
 }
 #endif
 
+void WebResourceLoader::canAccessURL(const URL& url, bool isRequesterMain, uint64_t frameID)
+{
+    // FIXME: Should retrieve access manager module.
+    const char* testURL = "http://172.25.0.76:3011/";
+    bool canAccess = !url.string().startsWith(testURL);
+    send(Messages::NetworkResourceLoader::ContinueCanAccessURL(canAccess));
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(NETWORK_PROCESS)

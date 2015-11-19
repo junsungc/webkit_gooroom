@@ -134,6 +134,9 @@ private:
     virtual bool usesAsyncCallbacks() override { return true; }
     virtual bool loadingSynchronousXHR() override { return isSynchronous(); }
 
+    void canAccessURLAsync(std::function<void()>&& callback);
+    void continueCanAccessURL(bool result);
+
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     virtual void canAuthenticateAgainstProtectionSpaceAsync(WebCore::ResourceHandle*, const WebCore::ProtectionSpace&) override;
 #endif
@@ -200,6 +203,7 @@ private:
 
     WebCore::RedirectChainCacheStatus m_redirectChainCacheStatus;
 #endif
+    std::function<void()> m_canAccessURLCallback;
 };
 
 } // namespace WebKit

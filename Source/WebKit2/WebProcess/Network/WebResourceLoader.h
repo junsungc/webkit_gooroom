@@ -50,6 +50,7 @@ class ResourceError;
 class ResourceLoader;
 class ResourceRequest;
 class ResourceResponse;
+class URL;
 }
 
 namespace WebKit {
@@ -90,6 +91,8 @@ private:
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     void canAuthenticateAgainstProtectionSpace(const WebCore::ProtectionSpace&);
 #endif
+
+    void canAccessURL(const WebCore::URL&, bool isRequesterMain, uint64_t frameID);
 
     RefPtr<WebCore::ResourceLoader> m_coreLoader;
 };

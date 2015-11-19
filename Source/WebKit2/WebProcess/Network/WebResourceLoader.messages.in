@@ -36,6 +36,7 @@ messages -> WebResourceLoader LegacyReceiver {
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     CanAuthenticateAgainstProtectionSpace(WebCore::ProtectionSpace protectionSpace)
 #endif
+    CanAccessURL(WebCore::URL url, bool isRequesterMain, uint64_t frameID)
 
 #if ENABLE(SHAREABLE_RESOURCE)
     // DidReceiveResource is for when we have the entire resource data available at once, such as when the resource is cached in memory
