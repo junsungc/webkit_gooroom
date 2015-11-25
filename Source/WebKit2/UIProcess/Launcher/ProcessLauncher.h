@@ -79,6 +79,10 @@ public:
         return adoptRef(*new ProcessLauncher(client, launchOptions));
     }
 
+#if PLATFORM(GTK)
+    static void launchUIProcess(int id, const String& url);
+#endif
+
     bool isLaunching() const { return m_isLaunching; }
     PlatformProcessIdentifier processIdentifier() const { return m_processIdentifier; }
 

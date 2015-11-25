@@ -34,6 +34,8 @@
 #include "NetworkResourceLoaderMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
+#include "WebFrame.h"
+#include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/ApplicationCacheHost.h>
 #include <WebCore/CertificateInfo.h>
@@ -224,12 +226,30 @@ void WebResourceLoader::canAuthenticateAgainstProtectionSpace(const ProtectionSp
 }
 #endif
 
+// FIXME: This part must be replaced with actual authority manager module.
+const int nonRestrctiedID = -1;
+static int queryURL(const URL& url)
+{
+    if (url.string().startsWith("http://172.25.0.76:3011/"))
+        return 111;
+
+    return nonRestrctiedID;
+}
+
 void WebResourceLoader::canAccessURL(const URL& url, bool isRequesterMain, uint64_t frameID)
 {
-    // FIXME: Should retrieve access manager module.
-    const char* testURL = "http://172.25.0.76:3011/";
-    bool canAccess = !url.string().startsWith(testURL);
+    WebFrame* frame = WebProcess::singleton().webFrame(frameID);
+    WebPage* page = frame ? frame->page() : nullptr;
+    if (!page) {
+        send(Messages::NetworkResourceLoader::ContinueCanAccessURL(false));
+        return;
+    }
+
+    int result = queryURL(url);
+    bool canAccess = result == nonRestrctiedID || static_cast<uint>(result) == page->gooroomAuthorityID();
     send(Messages::NetworkResourceLoader::ContinueCanAccessURL(canAccess));
+    if (!canAccess && isRequesterMain && frame->isMainFrame())
+        WebProcess::singleton().openURLWithNewUIProcess(url.string(), result);
 }
 
 } // namespace WebKit

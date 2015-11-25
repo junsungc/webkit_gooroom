@@ -196,6 +196,8 @@ private:
     void releaseIconForPageURL(const String& pageURL);
     void releaseRemainingIconsForPageURLs();
 
+    void openURLWithNewUIProcess(const String& url, uint authorityID);
+
     // IPC::Connection::Client
     friend class WebConnectionToWebProcess;
     virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;

@@ -217,6 +217,8 @@ public:
 
     void prefetchDNS(const String&);
 
+    void openURLWithNewUIProcess(const String& url, uint authorityID);
+
 private:
     WebProcess();
     ~WebProcess();

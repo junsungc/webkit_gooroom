@@ -473,6 +473,11 @@ void WebProcessProxy::releaseRemainingIconsForPageURLs()
     m_pageURLRetainCountMap.clear();
 }
 
+void WebProcessProxy::openURLWithNewUIProcess(const String& url, uint authorityID)
+{
+    ProcessLauncher::launchUIProcess(authorityID, url);
+}
+
 void WebProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder)
 {
     if (dispatchMessage(connection, decoder))

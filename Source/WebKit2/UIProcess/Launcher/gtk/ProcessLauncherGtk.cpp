@@ -53,6 +53,10 @@ static void childSetupFunction(gpointer userData)
     close(socket);
 }
 
+static void newUIProcessSetupFunction(gpointer userData)
+{
+}
+
 void ProcessLauncher::launchProcess()
 {
     GPid pid = 0;
@@ -138,6 +142,33 @@ void ProcessLauncher::launchProcess()
     RunLoop::main().dispatch([protector, pid, serverSocket] {
         protector->didFinishLaunchingProcess(pid, serverSocket);
     });
+}
+
+static const char* executableOfUIProcess()
+{
+    // FIXME:
+    return getenv("WEBKIT_UI_PROCESS_EXEC");
+}
+
+void ProcessLauncher::launchUIProcess(int id, const String& url)
+{
+    unsigned nargs = 5;
+    char** argv = g_newa(char*, nargs);
+    unsigned i = 0;
+
+    argv[i++] = const_cast<char*>(fileSystemRepresentation(executableOfUIProcess()).data());
+    argv[i++] = const_cast<char*>("-A");
+    argv[i++] = const_cast<char*>(String::number(id).ascii().data());
+    argv[i++] = const_cast<char*>(url.ascii().data());
+    argv[i++] = 0;
+
+    const gchar* workingDirectory = nullptr;
+    gchar** envp = nullptr;
+    gpointer userData = nullptr;
+    GPid childPid;
+    GError* error;
+
+    g_spawn_async(workingDirectory, argv, envp, G_SPAWN_DEFAULT, newUIProcessSetupFunction, userData, &childPid, &error);
 }
 
 void ProcessLauncher::terminateProcess()
