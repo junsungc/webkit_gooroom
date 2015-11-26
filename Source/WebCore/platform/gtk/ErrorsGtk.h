@@ -40,7 +40,8 @@ enum NetworkError {
     NetworkErrorTransport = 300,
     NetworkErrorUnknownProtocol = 301,
     NetworkErrorCancelled = 302,
-    NetworkErrorFileDoesNotExist = 303
+    NetworkErrorFileDoesNotExist = 303,
+    NetworkErrorCannotAccessRestrictedURL = 304
 };
 
 // Sync'd with Mac's WebKit Errors.
@@ -74,6 +75,7 @@ enum PrintError {
 };
 
 ResourceError cancelledError(const ResourceRequest&);
+ResourceError cannotAccessRestrictedURLError(const ResourceRequest&);
 ResourceError blockedError(const ResourceRequest&);
 ResourceError cannotShowURLError(const ResourceRequest&);
 ResourceError interruptedForPolicyChangeError(const ResourceRequest&);

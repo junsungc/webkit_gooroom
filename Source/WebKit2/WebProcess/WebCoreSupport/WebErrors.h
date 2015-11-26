@@ -36,6 +36,7 @@ namespace WebCore {
 namespace WebKit {
 
 WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&);
+WebCore::ResourceError cannotAccessRestrictedURLError(const WebCore::ResourceRequest&);
 WebCore::ResourceError blockedError(const WebCore::ResourceRequest&);
 WebCore::ResourceError cannotShowURLError(const WebCore::ResourceRequest&);
 WebCore::ResourceError interruptedForPolicyChangeError(const WebCore::ResourceRequest&);

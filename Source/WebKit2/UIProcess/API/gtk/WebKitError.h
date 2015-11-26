@@ -44,6 +44,7 @@ G_BEGIN_DECLS
  * @WEBKIT_NETWORK_ERROR_UNKNOWN_PROTOCOL: Load failure due to unknown protocol
  * @WEBKIT_NETWORK_ERROR_CANCELLED: Load failure due to cancellation
  * @WEBKIT_NETWORK_ERROR_FILE_DOES_NOT_EXIST: Load failure due to missing file
+ * @WEBKIT_NETWORK_ERROR_CANNOT_ACCESS_RESTRICTED_URL: Load failure due to restricted URL
  *
  * Enum values used to denote the various network errors.
  **/
@@ -52,7 +53,8 @@ typedef enum {
     WEBKIT_NETWORK_ERROR_TRANSPORT = 300,
     WEBKIT_NETWORK_ERROR_UNKNOWN_PROTOCOL = 301,
     WEBKIT_NETWORK_ERROR_CANCELLED = 302,
-    WEBKIT_NETWORK_ERROR_FILE_DOES_NOT_EXIST = 303
+    WEBKIT_NETWORK_ERROR_FILE_DOES_NOT_EXIST = 303,
+    WEBKIT_NETWORK_ERROR_CANNOT_ACCESS_RESTRICTED_URL = 304
 } WebKitNetworkError;
 
 /**

@@ -33,6 +33,12 @@ ResourceError cancelledError(const ResourceRequest& request)
                          request.url().string(), _("Load request cancelled"));
 }
 
+ResourceError cannotAccessRestrictedURLError(const ResourceRequest& request)
+{
+    return ResourceError(errorDomainNetwork, NetworkErrorCannotAccessRestrictedURL,
+                         request.url().string(), _("URL is restricted to access."));
+}
+
 ResourceError blockedError(const ResourceRequest& request)
 {
     return ResourceError(errorDomainPolicy, PolicyErrorCannotUseRestrictedPort,

@@ -45,6 +45,11 @@ ResourceError cancelledError(const ResourceRequest& request)
     return WebCore::cancelledError(request);
 }
 
+ResourceError cannotAccessRestrictedURLError(const ResourceRequest& request)
+{
+    return WebCore::cannotAccessRestrictedURLError(request);
+}
+
 ResourceError blockedError(const ResourceRequest& request)
 {
     return WebCore::blockedError(request);

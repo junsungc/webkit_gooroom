@@ -449,8 +449,7 @@ void NetworkResourceLoader::continueCanAccessURL(bool result)
 
     if (!result) {
         // FIXME: Should call m_handle->cancel()?
-        // FIXME: cancelledError isn't a proper one.
-        didFail(m_handle.get(), cancelledError(m_currentRequest));
+        didFail(m_handle.get(), cannotAccessRestrictedURLError(m_currentRequest));
         return;
     }
 
