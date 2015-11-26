@@ -281,6 +281,10 @@ webkit_web_view_load_uri                             (WebKitWebView             
                                                       const gchar               *uri);
 
 WEBKIT_API void
+webkit_web_view_set_gooroom_authority_id             (WebKitWebView             *web_view,
+                                                      guint                     id);
+
+WEBKIT_API void
 webkit_web_view_load_html                            (WebKitWebView             *web_view,
                                                       const gchar               *content,
                                                       const gchar               *base_uri);

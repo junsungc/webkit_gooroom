@@ -1066,6 +1066,8 @@ public:
 
     void clearWheelEventTestTrigger();
 
+    void setGooroomAuthorityID(uint32_t);
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, Ref<API::PageConfiguration>&&);
     void platformInitialize();

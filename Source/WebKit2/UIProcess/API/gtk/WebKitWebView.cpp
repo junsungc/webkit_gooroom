@@ -2310,6 +2310,20 @@ void webkit_web_view_load_uri(WebKitWebView* webView, const gchar* uri)
 }
 
 /**
+ * webkit_web_view_set_gooroom_authority_id:
+ * @web_view: a #WebKitWebView
+ * @id: Gooroom OS authority id
+ *
+ * TBD
+ */
+void webkit_web_view_set_gooroom_authority_id(WebKitWebView* webView, guint id)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    getPage(webView)->setGooroomAuthorityID(id);
+}
+
+/**
  * webkit_web_view_load_html:
  * @web_view: a #WebKitWebView
  * @content: The HTML string to load

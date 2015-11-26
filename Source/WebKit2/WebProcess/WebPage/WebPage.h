@@ -919,6 +919,7 @@ public:
     void requestInstallMissingMediaPlugins(const String& details, const String& description, WebCore::MediaPlayerRequestInstallMissingPluginsCallback&);
 #endif
 #endif
+    uint32_t gooroomAuthorityID() const { return m_gooroomAuthorityID; }
 
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
@@ -1174,6 +1175,10 @@ private:
 #if ENABLE(VIDEO) && USE(GSTREAMER)
     void didEndRequestInstallMissingMediaPlugins(uint32_t result);
 #endif
+
+    void setGooroomAuthorityID(uint32_t);
+
+    uint32_t m_gooroomAuthorityID;
 
     uint64_t m_pageID;
 

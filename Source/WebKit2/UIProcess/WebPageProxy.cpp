@@ -6147,6 +6147,11 @@ void WebPageProxy::clearWheelEventTestTrigger()
     m_process->send(Messages::WebPage::ClearWheelEventTestTrigger(), m_pageID);
 }
 
+void WebPageProxy::setGooroomAuthorityID(uint32_t id)
+{
+    m_process->send(Messages::WebPage::SetGooroomAuthorityID(id), m_pageID);
+}
+
 void WebPageProxy::setShouldScaleViewToFitDocument(bool shouldScaleViewToFitDocument)
 {
     if (m_shouldScaleViewToFitDocument == shouldScaleViewToFitDocument)

@@ -211,6 +211,7 @@ webkit_web_view_get_background_color
 webkit_web_view_set_editable
 webkit_web_view_is_editable
 webkit_web_view_get_editor_state
+webkit_web_view_set_gooroom_authority_id
 
 <SUBSECTION WebKitJavascriptResult>
 WebKitJavascriptResult

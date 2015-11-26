@@ -5093,4 +5093,9 @@ void WebPage::mediaDocumentNaturalSizeChanged(const IntSize& newSize)
 }
 #endif
 
+void WebPage::setGooroomAuthorityID(uint32_t id)
+{
+    m_gooroomAuthorityID = id;
+}
+  
 } // namespace WebKit
