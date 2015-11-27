@@ -230,9 +230,34 @@ void WebResourceLoader::canAuthenticateAgainstProtectionSpace(const ProtectionSp
 const int nonRestrctiedID = -1;
 static int queryURL(const URL& url)
 {
-    if (url.string().startsWith("http://172.25.0.76:3011/"))
-        return 111;
+    const char* envName = "ID_URL_FILEPATH";
+    const char* filepath = getenv(envName);
+    const int lineMax = 300;
+    char line[lineMax];
 
+    if (!filepath) {
+        fprintf(stderr, "%s not defined.\n", envName);
+        return nonRestrctiedID;
+    }
+
+    FILE* file = fopen(filepath, "r");
+    if (!file) {
+        fprintf(stderr, "%s file cannot read.", filepath);
+        return nonRestrctiedID;
+    }
+
+    while (fgets(line, lineMax, file) != nullptr) {
+        int lineId;
+        char lineURL[lineMax];
+        sscanf(line, "%d %s", &lineId, lineURL);
+
+        if (url.string().startsWith(String(lineURL))) {
+            fclose(file);
+            return lineId;
+        }
+    }
+
+    fclose(file);
     return nonRestrctiedID;
 }
 
