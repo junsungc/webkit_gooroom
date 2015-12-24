@@ -37,10 +37,16 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
         this._contentTreeOutline = this._networkSidebarPanel.contentTreeOutline;
         this._contentTreeOutline.onselect = this._treeElementSelected.bind(this);
 
-        var columns = {domain: {}, type: {}, method: {}, scheme: {}, statusCode: {}, cached: {}, size: {}, transferSize: {}, requestSent: {}, latency: {}, duration: {}};
+        var columns = {domain: {}, channel: {}, state: {}, type: {}, method: {}, scheme: {}, statusCode: {}, cached: {}, size: {}, transferSize: {}, requestSent: {}, latency: {}, duration: {}};
 
         columns.domain.title = WebInspector.UIString("Domain");
         columns.domain.width = "10%";
+
+        columns.channel.title = WebInspector.UIString("Channel");
+        columns.channel.width = "6%";
+
+        columns.state.title = WebInspector.UIString("State");
+        columns.state.width = "6%";
 
         columns.type.title = WebInspector.UIString("Type");
         columns.type.width = "8%";

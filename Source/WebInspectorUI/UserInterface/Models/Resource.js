@@ -55,6 +55,8 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         this._transferSize = NaN;
         this._cached = false;
         this._webSocketFrames = [];
+        this._channel = "\u2014";
+        this._state = "\u2014";
     }
 
     // Static
@@ -316,6 +318,16 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         return this._cached;
     }
 
+    get state()
+    {
+        return this._state;
+    }
+
+    get channel()
+    {
+        return this._channel;
+    }
+
     get statusCode()
     {
         return this._statusCode;
@@ -443,6 +455,12 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         this._statusText = statusText;
         this._responseHeaders = responseHeaders || {};
         this._responseReceivedTimestamp = elapsedTime || NaN;
+        this._state = WebInspector.UIString("Ing");
+
+        if (this._statusCode >= 300 && this._statusCode < 400)
+            this._channel = WebInspector.UIString("Redirect");
+        else
+            this._channel = WebInspector.UIString("New");
 
         this._responseHeadersSize = String(this._statusCode).length + this._statusText.length + 12; // Extra length is for "HTTP/1.1 ", " ", and "\r\n".
         for (var name in this._responseHeaders)
@@ -552,6 +570,11 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         if (this._finishThenRequestContentPromise)
             delete this._finishThenRequestContentPromise;
 
+        if(this._statusCode === 408)
+            this._state = WebInspector.UIString("Timeout");
+        else
+            this._state = WebInspector.UIString("Done");
+
         this.dispatchEventToListeners(WebInspector.Resource.Event.LoadingDidFinish);
         this.dispatchEventToListeners(WebInspector.Resource.Event.TimestampsDidChange);
     }
@@ -563,6 +586,7 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         this._failed = true;
         this._canceled = canceled;
         this._finishedOrFailedTimestamp = elapsedTime || NaN;
+        this._state = WebInspector.UIString("Fail");
 
         this.dispatchEventToListeners(WebInspector.Resource.Event.LoadingDidFail);
         this.dispatchEventToListeners(WebInspector.Resource.Event.TimestampsDidChange);
@@ -630,6 +654,7 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
             this._finishThenRequestContentPromise = new Promise(function (resolve, reject) {
                 this.addEventListener(WebInspector.Resource.Event.LoadingDidFinish, resolve);
                 this.addEventListener(WebInspector.Resource.Event.LoadingDidFail, reject);
+
             }.bind(this)).then(WebInspector.SourceCode.prototype.requestContent.bind(this));
         }
 

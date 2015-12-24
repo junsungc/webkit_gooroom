@@ -73,6 +73,8 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
             data.type = resource.type;
             data.statusCode = resource.statusCode;
             data.cached = resource.cached;
+            data.channel = resource.channel;
+            data.state = resource.state;
             data.size = resource.size;
             data.transferSize = resource.transferSize;
             data.requestSent = resource.requestSentTimestamp - zeroTime;
@@ -106,6 +108,12 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
 
         case "cached":
             return value ? WebInspector.UIString("Yes") : WebInspector.UIString("No");
+
+        case "channel":
+            return value;
+
+        case "state":
+            return value;
 
         case "domain":
             return value || emptyValuePlaceholderString;
