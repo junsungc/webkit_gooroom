@@ -271,7 +271,7 @@ void WebResourceLoader::canAccessURL(const URL& url, bool isRequesterMain, uint6
     }
 
     int result = queryURL(url);
-    bool canAccess = result == nonRestrctiedID || static_cast<uint>(result) == page->gooroomAuthorityID();
+    bool canAccess = result == nonRestrctiedID || static_cast<uint>(result) == static_cast<uint>(getuid());
     send(Messages::NetworkResourceLoader::ContinueCanAccessURL(canAccess));
     if (!canAccess && isRequesterMain && frame->isMainFrame())
         WebProcess::singleton().openURLWithNewUIProcess(url.string(), result);
