@@ -37,6 +37,10 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         this._url = url;
         this._mimeType = mimeType;
         this._type = type || WebInspector.Resource.typeFromMIMEType(mimeType);
+
+        if(WebInspector.Resource.typeFromMIMEType(mimeType) === WebInspector.Resource.Type.Video || WebInspector.Resource.typeFromMIMEType(mimeType) === WebInspector.Resource.Type.Audio || WebInspector.Resource.typeFromMIMEType(mimeType) === WebInspector.Resource.Type.Flash)
+            this._type = WebInspector.Resource.typeFromMIMEType(mimeType);
+
         this._loaderIdentifier = loaderIdentifier || null;
         this._requestIdentifier = requestIdentifier || null;
         this._requestMethod = requestMethod || null;
@@ -67,6 +71,12 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
             return WebInspector.Resource.Type.Other;
 
         mimeType = parseMIMEType(mimeType).type;
+
+        if (mimeType.startsWith("video/"))
+            return WebInspector.Resource.Type.Video;
+
+        if (mimeType.startsWith("audio/"))
+            return WebInspector.Resource.Type.Audio;
 
         if (mimeType in WebInspector.Resource._mimeTypeMap)
             return WebInspector.Resource._mimeTypeMap[mimeType];
@@ -103,6 +113,18 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
             if (plural)
                 return WebInspector.UIString("Scripts");
             return WebInspector.UIString("Script");
+        case WebInspector.Resource.Type.Video:
+            if (plural)
+                return WebInspector.UIString("Videos");
+            return WebInspector.UIString("Video");
+        case WebInspector.Resource.Type.Audio:
+            if (plural)
+                return WebInspector.UIString("Audios");
+            return WebInspector.UIString("Audio");
+        case WebInspector.Resource.Type.Flash:
+            if (plural)
+                return WebInspector.UIString("Flashes");
+            return WebInspector.UIString("Flash");
         case WebInspector.Resource.Type.XHR:
             if (plural)
                 return WebInspector.UIString("XHRs");
@@ -451,6 +473,8 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         this._url = url;
         this._mimeType = mimeType;
         this._type = type || WebInspector.Resource.typeFromMIMEType(mimeType);
+        if(WebInspector.Resource.typeFromMIMEType(mimeType) === WebInspector.Resource.Type.Video || WebInspector.Resource.typeFromMIMEType(mimeType) === WebInspector.Resource.Type.Audio || WebInspector.Resource.typeFromMIMEType(mimeType) === WebInspector.Resource.Type.Flash)
+            this._type = WebInspector.Resource.typeFromMIMEType(mimeType);
         this._statusCode = statusCode;
         this._statusText = statusText;
         this._responseHeaders = responseHeaders || {};
@@ -731,6 +755,9 @@ WebInspector.Resource.Type = {
     Script: "resource-type-script",
     XHR: "resource-type-xhr",
     WebSocket: "resource-type-websocket",
+    Video: "resource-type-video",
+    Audio: "resource-type-audio",
+    Flash: "resource-type-flash",
     Other: "resource-type-other"
 };
 
@@ -754,6 +781,8 @@ WebInspector.Resource._mimeTypeMap = {
     "application/x-font-ttf": WebInspector.Resource.Type.Font,
     "application/x-font-woff": WebInspector.Resource.Type.Font,
     "application/x-truetype-font": WebInspector.Resource.Type.Font,
+
+    "application/x-shockwave-flash": WebInspector.Resource.Type.Flash,
 
     "text/javascript": WebInspector.Resource.Type.Script,
     "text/ecmascript": WebInspector.Resource.Type.Script,
