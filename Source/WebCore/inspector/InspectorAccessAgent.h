@@ -32,16 +32,15 @@ namespace WebCore {
 
 typedef String ErrorString;
 
-class InspectorAccessAgent final
-    : public InspectorAgentBase {
+class InspectorAccessAgent final : public InspectorAgentBase {
     WTF_MAKE_NONCOPYABLE(InspectorAccessAgent);
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    InspectorAccessAgent(WebAgentContext&);
+    explicit InspectorAccessAgent(InstrumentingAgents*);
     virtual ~InspectorAccessAgent();
 
-    virtual void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
+    virtual void didCreateFrontendAndBackend(Inspector::FrontendChannel*, Inspector::BackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
 
     // InspectorInstrumentation callbacks.

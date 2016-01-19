@@ -31,24 +31,25 @@ using namespace Inspector;
 
 namespace WebCore {
 
-InspectorAccessAgent::InspectorAccessAgent(WebAgentContext& context)
-    : InspectorAgentBase(ASCIILiteral("ACCESS"), context)
-    , m_frontendDispatcher(std::make_unique<AccessFrontendDispatcher>(context.frontendRouter))
+InspectorAccessAgent::InspectorAccessAgent(InstrumentingAgents* instrumentingAgents)
+    : InspectorAgentBase(ASCIILiteral("ACCESS"), instrumentingAgents)
 {
-    m_instrumentingAgents.setInspectorAccessAgent(this);
+    m_instrumentingAgents->setInspectorAccessAgent(this);
 }
 
 InspectorAccessAgent::~InspectorAccessAgent()
 {
-    m_instrumentingAgents.setInspectorAccessAgent(nullptr);
+    m_instrumentingAgents->setInspectorAccessAgent(nullptr);
 }
 
-void InspectorAccessAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
+void InspectorAccessAgent::didCreateFrontendAndBackend(Inspector::FrontendChannel* frontendChannel, Inspector::BackendDispatcher*)
 {
+  m_frontendDispatcher = std::make_unique<Inspector::AccessFrontendDispatcher>(frontendChannel);
 }
 
 void InspectorAccessAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
+  m_frontendDispatcher = nullptr;
 }
 
 void InspectorAccessAgent::didSendWorkerPermissionRequest(int workerId, const String& url)
