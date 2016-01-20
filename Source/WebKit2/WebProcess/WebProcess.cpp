@@ -1475,7 +1475,7 @@ void WebProcess::prefetchDNS(const String& hostname)
 
 void WebProcess::openURLWithNewUIProcess(const String& url, uint authorityID)
 {
-    // parentProcessConnection()->send(Messages::WebProcessProxy::OpenURLWithNewUIProcess(url, authorityID), 0);
+    parentProcessConnection()->send(Messages::WebProcessProxy::OpenURLWithNewUIProcess(url, authorityID), 0);
 }
 
 

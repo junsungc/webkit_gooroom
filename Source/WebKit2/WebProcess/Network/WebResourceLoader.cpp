@@ -230,15 +230,18 @@ void WebResourceLoader::canAuthenticateAgainstProtectionSpace(const ProtectionSp
 const int nonRestrctiedID = -1;
 static int queryURL(const URL& url)
 {
-    const char* envName = "ID_URL_FILEPATH";
-    const char* filepath = getenv(envName);
+    // const char* envName = "ID_URL_FILEPATH";
+    // const char* filepath = getenv(envName);
+    const char* filepath = "/etc/gooroom_table.conf";
     const int lineMax = 300;
     char line[lineMax];
 
+    /*
     if (!filepath) {
         fprintf(stderr, "%s not defined.\n", envName);
         return nonRestrctiedID;
     }
+    */
 
     FILE* file = fopen(filepath, "r");
     if (!file) {

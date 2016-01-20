@@ -152,6 +152,7 @@ static const char* executableOfUIProcess()
 
 void ProcessLauncher::launchUIProcess(int id, const String& url)
 {
+    /*
     unsigned nargs = 5;
     char** argv = g_newa(char*, nargs);
     unsigned i = 0;
@@ -169,6 +170,19 @@ void ProcessLauncher::launchUIProcess(int id, const String& url)
     GError* error;
 
     g_spawn_async(workingDirectory, argv, envp, G_SPAWN_DEFAULT, newUIProcessSetupFunction, userData, &childPid, &error);
+    */
+    char command[100] = {0};
+    sprintf(command, "sudo --user=#%d %s %s", id, "/home/isryu/Sources/midori/midori/_build/midori/midori", url.ascii().data());
+
+    GError* error = NULL;
+    g_printerr("command : %s\n", command);
+    g_spawn_command_line_async(command, &error);
+
+    if (error != NULL) {
+        g_printerr("Failed to spawn new UI Process : %s\n", error->message);
+	g_error_free(error);
+    }
+    
 }
 
 void ProcessLauncher::terminateProcess()
