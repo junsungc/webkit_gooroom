@@ -437,10 +437,14 @@ void NetworkResourceLoader::canAccessURLAsync(std::function<void()>&& callback)
     ASSERT(callback);
     ASSERT(!m_canAccessURLCallback);
 
-    m_canAccessURLCallback = callback;
-
     bool isRequesterMain = m_currentRequest.requester() == WebCore::ResourceRequest::Requester::Main;
-    sendAbortingOnFailure(Messages::WebResourceLoader::CanAccessURL(m_currentRequest.url(), isRequesterMain, m_parameters.webFrameID));
+
+    if (isRequesterMain) {
+        m_canAccessURLCallback = callback;
+        sendAbortingOnFailure(Messages::WebResourceLoader::CanAccessURL(m_currentRequest.url(), isRequesterMain, m_parameters.webFrameID));
+    } else {
+        callback();
+    }
 }
 
 void NetworkResourceLoader::continueCanAccessURL(bool result)
