@@ -133,6 +133,10 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
             if (plural)
                 return WebInspector.UIString("Sockets");
             return WebInspector.UIString("Socket");
+        case WebInspector.Resource.Type.IFrame:
+            if (plural)
+                return WebInspector.UIString("IFrames");
+            return WebInspector.UIString("IFrame");
         case WebInspector.Resource.Type.Other:
             return WebInspector.UIString("Other");
         default:
@@ -758,6 +762,7 @@ WebInspector.Resource.Type = {
     Video: "resource-type-video",
     Audio: "resource-type-audio",
     Flash: "resource-type-flash",
+    IFrame: "resource-type-iframe",
     Other: "resource-type-other"
 };
 

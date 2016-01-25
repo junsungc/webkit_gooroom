@@ -78,6 +78,7 @@ public:
         ScriptResource,
         XHRResource,
         WebSocketResource,
+        IFrameResource,
         OtherResource
     };
 

@@ -286,6 +286,8 @@ Inspector::Protocol::Page::ResourceType InspectorPageAgent::resourceTypeJson(Ins
         return Inspector::Protocol::Page::ResourceType::XHR;
     case WebSocketResource:
         return Inspector::Protocol::Page::ResourceType::WebSocket;
+    case IFrameResource:
+        return Inspector::Protocol::Page::ResourceType::IFrame;
     case OtherResource:
         return Inspector::Protocol::Page::ResourceType::Other;
     }

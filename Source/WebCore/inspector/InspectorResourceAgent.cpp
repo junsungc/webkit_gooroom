@@ -61,6 +61,7 @@
 #include "ThreadableLoaderClient.h"
 #include "URL.h"
 #include "WebSocketFrame.h"
+#include <html/HTMLFrameOwnerElement.h>
 #include <inspector/IdentifiersFactory.h>
 #include <inspector/InspectorValues.h>
 #include <inspector/ScriptCallStack.h>
@@ -297,6 +298,10 @@ void InspectorResourceAgent::willSendRequest(unsigned long identifier, DocumentL
             type = InspectorPageAgent::DocumentResource;
     }
 
+    HTMLFrameOwnerElement* ownerElement = loader.frame()->ownerElement();
+    if (ownerElement && ownerElement->tagName() == "IFRAME" && equalIgnoringFragmentIdentifier(request.url(), loader.url()) && !loader.isCommitted())
+        type = InspectorPageAgent::IFrameResource;
+
     m_resourcesData->setResourceType(requestId, type);
 
     for (auto& entry : m_extraRequestHeaders)
@@ -353,7 +358,7 @@ void InspectorResourceAgent::didReceiveResponse(unsigned long identifier, Docume
 
     // FIXME: XHRResource is returned for CachedResource::RawResource, it should be OtherResource unless it truly is an XHR.
     // RawResource is used for loading worker scripts, and those should stay as ScriptResource and not change to XHRResource.
-    if (type != newType && newType != InspectorPageAgent::XHRResource && newType != InspectorPageAgent::OtherResource)
+    if (type != InspectorPageAgent::IFrameResource && type != newType && newType != InspectorPageAgent::XHRResource && newType != InspectorPageAgent::OtherResource)
         type = newType;
 
     m_resourcesData->responseReceived(requestId, m_pageAgent->frameId(loader.frame()), response);
