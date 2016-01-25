@@ -152,27 +152,8 @@ static const char* executableOfUIProcess()
 
 void ProcessLauncher::launchUIProcess(int id, const String& url)
 {
-    /*
-    unsigned nargs = 5;
-    char** argv = g_newa(char*, nargs);
-    unsigned i = 0;
-
-    argv[i++] = const_cast<char*>(fileSystemRepresentation(executableOfUIProcess()).data());
-    argv[i++] = const_cast<char*>("-A");
-    argv[i++] = const_cast<char*>(String::number(id).ascii().data());
-    argv[i++] = const_cast<char*>(url.ascii().data());
-    argv[i++] = 0;
-
-    const gchar* workingDirectory = nullptr;
-    gchar** envp = nullptr;
-    gpointer userData = nullptr;
-    GPid childPid;
-    GError* error;
-
-    g_spawn_async(workingDirectory, argv, envp, G_SPAWN_DEFAULT, newUIProcessSetupFunction, userData, &childPid, &error);
-    */
     char command[100] = {0};
-    sprintf(command, "sudo --user=#%d %s %s", id, "/home/isryu/Sources/midori/midori/_build/midori/midori", url.ascii().data());
+    sprintf(command, "sudo --user=#%d %s %s", id, "/usr/bin/epiphany", url.ascii().data());
 
     GError* error = NULL;
     g_printerr("command : %s\n", command);
@@ -182,7 +163,6 @@ void ProcessLauncher::launchUIProcess(int id, const String& url)
         g_printerr("Failed to spawn new UI Process : %s\n", error->message);
 	g_error_free(error);
     }
-    
 }
 
 void ProcessLauncher::terminateProcess()
