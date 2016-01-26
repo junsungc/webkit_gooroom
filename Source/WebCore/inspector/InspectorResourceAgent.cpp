@@ -302,6 +302,11 @@ void InspectorResourceAgent::willSendRequest(unsigned long identifier, DocumentL
     if (ownerElement && ownerElement->tagName() == "IFRAME" && equalIgnoringFragmentIdentifier(request.url(), loader.url()) && !loader.isCommitted())
         type = InspectorPageAgent::IFrameResource;
 
+    if (request.pluginTagName() == "EMBED")
+        type = InspectorPageAgent::EmbedResource;
+    else if (request.pluginTagName() == "OBJECT")
+        type = InspectorPageAgent::ObjectResource;
+
     m_resourcesData->setResourceType(requestId, type);
 
     for (auto& entry : m_extraRequestHeaders)
@@ -358,7 +363,7 @@ void InspectorResourceAgent::didReceiveResponse(unsigned long identifier, Docume
 
     // FIXME: XHRResource is returned for CachedResource::RawResource, it should be OtherResource unless it truly is an XHR.
     // RawResource is used for loading worker scripts, and those should stay as ScriptResource and not change to XHRResource.
-    if (type != InspectorPageAgent::IFrameResource && type != newType && newType != InspectorPageAgent::XHRResource && newType != InspectorPageAgent::OtherResource)
+    if (type != newType && newType != InspectorPageAgent::XHRResource && type != InspectorPageAgent::IFrameResource && type != InspectorPageAgent::EmbedResource && type != InspectorPageAgent::ObjectResource && newType != InspectorPageAgent::OtherResource)
         type = newType;
 
     m_resourcesData->responseReceived(requestId, m_pageAgent->frameId(loader.frame()), response);

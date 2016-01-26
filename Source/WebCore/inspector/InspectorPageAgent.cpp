@@ -288,6 +288,10 @@ Inspector::Protocol::Page::ResourceType InspectorPageAgent::resourceTypeJson(Ins
         return Inspector::Protocol::Page::ResourceType::WebSocket;
     case IFrameResource:
         return Inspector::Protocol::Page::ResourceType::IFrame;
+    case EmbedResource:
+        return Inspector::Protocol::Page::ResourceType::Embed;
+    case ObjectResource:
+        return Inspector::Protocol::Page::ResourceType::Object;
     case OtherResource:
         return Inspector::Protocol::Page::ResourceType::Other;
     }

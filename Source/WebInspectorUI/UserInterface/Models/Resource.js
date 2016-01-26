@@ -137,6 +137,14 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
             if (plural)
                 return WebInspector.UIString("IFrames");
             return WebInspector.UIString("IFrame");
+        case WebInspector.Resource.Type.Embed:
+            if (plural)
+                return WebInspector.UIString("Embed");
+            return WebInspector.UIString("Embeds");
+        case WebInspector.Resource.Type.Object:
+            if (plural)
+                return WebInspector.UIString("Object");
+            return WebInspector.UIString("Objects");
         case WebInspector.Resource.Type.Other:
             return WebInspector.UIString("Other");
         default:
@@ -763,6 +771,8 @@ WebInspector.Resource.Type = {
     Audio: "resource-type-audio",
     Flash: "resource-type-flash",
     IFrame: "resource-type-iframe",
+    Embed: "resource-type-embed",
+    Object: "resource-type-object",
     Other: "resource-type-other"
 };
 

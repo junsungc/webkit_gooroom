@@ -79,6 +79,8 @@ public:
         XHRResource,
         WebSocketResource,
         IFrameResource,
+        EmbedResource,
+        ObjectResource,
         OtherResource
     };
 

@@ -164,6 +164,9 @@ namespace WebCore {
         WEBCORE_EXPORT static bool defaultAllowCookies();
         WEBCORE_EXPORT static void setDefaultAllowCookies(bool);
 #endif
+        const String& pluginTagName() const { return m_pluginTagName; }
+        void setPluginTagName(const String& pluginTagName) { m_pluginTagName = pluginTagName; }
+
 
         static bool compare(const ResourceRequest&, const ResourceRequest&);
 
@@ -215,6 +218,7 @@ namespace WebCore {
         bool m_hiddenFromInspector { false };
         ResourceLoadPriority m_priority { ResourceLoadPriority::Low };
         Requester m_requester { Requester::Unspecified };
+        String m_pluginTagName { "" };
 
     private:
         const ResourceRequest& asResourceRequest() const;

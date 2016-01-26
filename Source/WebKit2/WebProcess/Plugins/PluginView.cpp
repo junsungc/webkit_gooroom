@@ -1408,6 +1408,9 @@ void PluginView::loadURL(uint64_t requestID, const String& method, const String&
     if (!referrer.isEmpty())
         frameLoadRequest.resourceRequest().setHTTPReferrer(referrer);
 
+    if (pluginElement())
+        frameLoadRequest.resourceRequest().setPluginTagName(pluginElement()->tagName());
+
     m_pendingURLRequests.append(URLRequest::create(requestID, frameLoadRequest, allowPopups));
     m_pendingURLRequestsTimer.startOneShot(0);
 }
