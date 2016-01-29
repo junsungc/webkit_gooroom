@@ -40,6 +40,7 @@
 #include "PluginProcessConnectionManager.h"
 #include "SessionTracker.h"
 #include "StatisticsData.h"
+#include "TaskManager.h"
 #include "UserData.h"
 #include "WebConnectionToUIProcess.h"
 #include "WebCookieManager.h"
@@ -563,6 +564,8 @@ void WebProcess::createWebPage(uint64_t pageID, const WebPageCreationParameters&
     } else
         result.iterator->value->reinitializeWebPage(parameters);
 
+    add_web_page(pageID, getpid());
+
     ASSERT(result.iterator->value);
 }
 
@@ -574,6 +577,8 @@ void WebProcess::removeWebPage(uint64_t pageID)
     m_pageMap.remove(pageID);
 
     enableTermination();
+
+    remove_web_page(pageID);
 }
 
 bool WebProcess::shouldTerminate()

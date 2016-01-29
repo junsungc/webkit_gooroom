@@ -36,6 +36,7 @@
 #include "NavigationActionData.h"
 #include "PluginView.h"
 #include "SecurityOriginData.h"
+#include "TaskManager.h"
 #include "UserData.h"
 #include "WKBundleAPICast.h"
 #include "WebBackForwardListProxy.h"
@@ -293,6 +294,9 @@ void WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad()
 
     // Notify the UIProcess.
     webPage->send(Messages::WebPageProxy::DidReceiveServerRedirectForProvisionalLoadForFrame(m_frame->frameID(), documentLoader.navigationID(), url, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+
+    if (m_frame->isMainFrame())
+        update_page_url(webPage->pageID(), url.latin1().data());
 }
 
 void WebFrameLoaderClient::dispatchDidChangeProvisionalURL()
@@ -425,6 +429,9 @@ void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
 
     // Notify the UIProcess.
     webPage->send(Messages::WebPageProxy::DidStartProvisionalLoadForFrame(m_frame->frameID(), provisionalLoader.navigationID(), url, unreachableURL, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+
+    if (m_frame->isMainFrame())
+        update_page_url(webPage->pageID(), url.latin1().data());
 }
 
 void WebFrameLoaderClient::dispatchDidReceiveTitle(const StringWithDirection& title)

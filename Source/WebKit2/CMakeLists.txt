@@ -499,6 +499,7 @@ set(WebKit2_SOURCES
 
     WebProcess/WebConnectionToUIProcess.cpp
     WebProcess/WebProcess.cpp
+    WebProcess/TaskManager.cpp
 
     WebProcess/Battery/WebBatteryManager.cpp
 
