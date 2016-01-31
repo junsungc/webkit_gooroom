@@ -565,6 +565,7 @@ void WebProcess::createWebPage(uint64_t pageID, const WebPageCreationParameters&
         result.iterator->value->reinitializeWebPage(parameters);
 
     add_web_page(pageID, getpid());
+    printf("add_web_page(%lu, %d)\n", pageID, getpid());
 
     ASSERT(result.iterator->value);
 }
@@ -578,7 +579,8 @@ void WebProcess::removeWebPage(uint64_t pageID)
 
     enableTermination();
 
-    remove_web_page(pageID);
+    remove_web_page(pageID, getpid());
+    printf("remove_web_page(%lu, %d)\n", pageID, getpid());
 }
 
 bool WebProcess::shouldTerminate()

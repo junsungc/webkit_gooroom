@@ -296,7 +296,7 @@ void WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad()
     webPage->send(Messages::WebPageProxy::DidReceiveServerRedirectForProvisionalLoadForFrame(m_frame->frameID(), documentLoader.navigationID(), url, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 
     if (m_frame->isMainFrame())
-        update_page_url(webPage->pageID(), url.latin1().data());
+        update_page_url(webPage->pageID(), getpid(), url.latin1().data());
 }
 
 void WebFrameLoaderClient::dispatchDidChangeProvisionalURL()
@@ -431,7 +431,7 @@ void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
     webPage->send(Messages::WebPageProxy::DidStartProvisionalLoadForFrame(m_frame->frameID(), provisionalLoader.navigationID(), url, unreachableURL, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 
     if (m_frame->isMainFrame())
-        update_page_url(webPage->pageID(), url.latin1().data());
+        update_page_url(webPage->pageID(), getpid(), url.latin1().data());
 }
 
 void WebFrameLoaderClient::dispatchDidReceiveTitle(const StringWithDirection& title)

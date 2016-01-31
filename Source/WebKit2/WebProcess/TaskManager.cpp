@@ -38,8 +38,8 @@ void ensure_task_manager() {
     sqlite3_busy_timeout(db, BUSY_WAIT_MS);
     sqlite3_exec(db, "CREATE TABLE process(pid INTEGER, uid INTEGER);", NULL, NULL, NULL);
     sqlite3_exec(db, "CREATE TABLE permission(uid INTEGER PRIMARY KEY, perm_printer INTEGER, perm_network INTEGER, perm_usb INTEGER, perm_capture INTEGER, perm_harddisk INTEGER);", NULL, NULL, NULL);
-    sqlite3_exec(db, "CREATE TABLE page_pid(page_id INTEGER PRIMARY KEY, pid INTEGER);", NULL, NULL, NULL);
-    sqlite3_exec(db, "CREATE TABLE page_url(page_id INTEGER PRIMARY KEY, url TEXT);", NULL, NULL, NULL);
+    sqlite3_exec(db, "CREATE TABLE page_pid(page_id INTEGER NOT NULL, pid INTEGER NOT NULL, PRIMARY KEY (page_id, pid));", NULL, NULL, NULL);
+    sqlite3_exec(db, "CREATE TABLE page_url(page_id INTEGER NOT NULL, pid INTEGER NOT NULL, url TEXT, PRIMARY KEY (page_id, pid));", NULL, NULL, NULL);
     sqlite3_close(db);
     chmod(TMP_FILE, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
     rename(TMP_FILE, DB_FILE);
@@ -61,7 +61,7 @@ void add_web_page(uint64_t page_id, pid_t pid) {
     sqlite3_close(db);
 }
 
-void remove_web_page(uint64_t page_id) {
+void remove_web_page(uint64_t page_id, pid_t pid) {
     char query_buffer[256];
 
     ensure_task_manager();
@@ -69,14 +69,16 @@ void remove_web_page(uint64_t page_id) {
     sqlite3_open_v2(DB_FILE, &db, SQLITE_OPEN_READWRITE, NULL);
     sqlite3_busy_handler(db, busy_callback, NULL);
     sqlite3_busy_timeout(db, BUSY_WAIT_MS);
-    snprintf(query_buffer, sizeof(query_buffer), "DELETE FROM page_pid WHERE page_id = %lu;", page_id);
+    snprintf(query_buffer, sizeof(query_buffer), "DELETE FROM page_pid WHERE page_id = %lu AND pid = %d;", page_id, getpid());
+    printf("%s\n", query_buffer);
     sqlite3_exec(db, query_buffer, NULL, NULL, NULL);
-    snprintf(query_buffer, sizeof(query_buffer), "DELETE FROM page_url WHERE page_id = %lu;", page_id);
+    snprintf(query_buffer, sizeof(query_buffer), "DELETE FROM page_url WHERE page_id = %lu AND pid = %d;", page_id, getpid());
+    printf("%s\n", query_buffer);
     sqlite3_exec(db, query_buffer, NULL, NULL, NULL);
     sqlite3_close(db);
 }
 
-void update_page_url(uint64_t page_id, std::string url) {
+void update_page_url(uint64_t page_id, pid_t pid, std::string url) {
     char query_buffer[256];
 
     ensure_task_manager();
@@ -84,7 +86,7 @@ void update_page_url(uint64_t page_id, std::string url) {
     sqlite3_open_v2(DB_FILE, &db, SQLITE_OPEN_READWRITE, NULL);
     sqlite3_busy_handler(db, busy_callback, NULL);
     sqlite3_busy_timeout(db, BUSY_WAIT_MS);
-    snprintf(query_buffer, sizeof(query_buffer), "INSERT OR REPLACE INTO page_url(page_id, url) VALUES (%lu, '%.100s');", page_id, url.c_str());
+    snprintf(query_buffer, sizeof(query_buffer), "INSERT OR REPLACE INTO page_url(page_id, pid, url) VALUES (%lu, %d, '%.100s');", page_id, getpid(), url.c_str());
     sqlite3_exec(db, query_buffer, NULL, NULL, NULL);
     sqlite3_close(db);
 }

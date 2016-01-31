@@ -933,6 +933,7 @@ void WebPage::exitAcceleratedCompositingMode()
 
 void WebPage::close()
 {
+    printf("%s:%d:%s", __FILE__, __LINE__, __func__);
     if (m_isClosed)
         return;
 

@@ -8,7 +8,7 @@
 #include <sys/types.h>
 
 void add_web_page(uint64_t page_id, pid_t pid);
-void remove_web_page(uint64_t page_id);
-void update_page_url(uint64_t page_id, std::string url);
+void remove_web_page(uint64_t page_id, pid_t pid);
+void update_page_url(uint64_t page_id, pid_t pid, std::string url);
 
 #endif
