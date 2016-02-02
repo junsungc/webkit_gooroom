@@ -606,11 +606,15 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         if (this._finishThenRequestContentPromise)
             delete this._finishThenRequestContentPromise;
 
-        if(this._statusCode === 408)
-            this._state = WebInspector.UIString("Timeout");
-        else
+        if (this._statusCode >= 400 && this._statusCode < 600){
+            if (this._statusCode === 408)
+                this._state = WebInspector.UIString("Timeout");
+            else
+                this._state = WebInspector.UIString("Fail");
+        }
+        else {
             this._state = WebInspector.UIString("Done");
-
+        }
         this.dispatchEventToListeners(WebInspector.Resource.Event.LoadingDidFinish);
         this.dispatchEventToListeners(WebInspector.Resource.Event.TimestampsDidChange);
     }
@@ -622,7 +626,11 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         this._failed = true;
         this._canceled = canceled;
         this._finishedOrFailedTimestamp = elapsedTime || NaN;
-        this._state = WebInspector.UIString("Fail");
+
+        if (this._statusCode === 408)
+            this._state = WebInspector.UIString("Timeout");
+        else if (this._statusCode >= 400)
+            this._state = WebInspector.UIString("Fail");
 
         this.dispatchEventToListeners(WebInspector.Resource.Event.LoadingDidFail);
         this.dispatchEventToListeners(WebInspector.Resource.Event.TimestampsDidChange);
