@@ -61,6 +61,7 @@
 #include "WebProcessMessages.h"
 #include "WebProcessPoolMessages.h"
 #include "WebProcessProxyMessages.h"
+#include "WebWebSocketManager.h"
 #include "WebsiteData.h"
 #include "WebsiteDataTypes.h"
 #include <JavaScriptCore/JSLock.h>
@@ -191,6 +192,7 @@ WebProcess::WebProcess()
     addSupplement<WebMediaCacheManager>();
     addSupplement<AuthenticationManager>();
     addSupplement<WebDatabaseManager>();
+    addSupplement<WebWebSocketManager>();
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     addSupplement<WebNotificationManager>();
