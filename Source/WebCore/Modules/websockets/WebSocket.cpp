@@ -65,6 +65,9 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
+#include "ScriptExecutionContext.h"
+
+
 namespace WebCore {
 
 const size_t maxReasonSizeInBytes = 123;
@@ -153,6 +156,7 @@ WebSocket::WebSocket(ScriptExecutionContext& context)
     , m_extensions("")
     , m_resumeTimer(*this, &WebSocket::resumeTimerFired)
 {
+    printf("create websocket!\n");
     m_Id = s_nextId++;
 }
 
@@ -169,6 +173,7 @@ int WebSocket::id() const
 
 Ref<WebSocket> WebSocket::create(ScriptExecutionContext& context)
 {
+    printf("create websocket 1!\n");
     Ref<WebSocket> webSocket(adoptRef(*new WebSocket(context)));
     webSocket->suspendIfNeeded();
     return webSocket;
@@ -176,12 +181,15 @@ Ref<WebSocket> WebSocket::create(ScriptExecutionContext& context)
 
 RefPtr<WebSocket> WebSocket::create(ScriptExecutionContext& context, const String& url, ExceptionCode& ec)
 {
+    printf("create websocket 2!\n");
     Vector<String> protocols;
     return WebSocket::create(context, url, protocols, ec);
 }
 
+
 RefPtr<WebSocket> WebSocket::create(ScriptExecutionContext& context, const String& url, const Vector<String>& protocols, ExceptionCode& ec)
 {
+    printf("create websocket 3!\n");
     if (url.isNull()) {
         ec = SYNTAX_ERR;
         return nullptr;
@@ -194,14 +202,16 @@ RefPtr<WebSocket> WebSocket::create(ScriptExecutionContext& context, const Strin
         return nullptr;
     if (ec)
         return nullptr;
-
+    printf("websocket : %p\n", webSocket);
     webSocket->requestPermission();
+
 
     return WTF::move(webSocket);
 }
 
 RefPtr<WebSocket> WebSocket::create(ScriptExecutionContext& context, const String& url, const String& protocol, ExceptionCode& ec)
 {
+    printf("create websocket 4!\n");
     Vector<String> protocols;
     protocols.append(protocol);
     return WebSocket::create(context, url, protocols, ec);
@@ -209,12 +219,14 @@ RefPtr<WebSocket> WebSocket::create(ScriptExecutionContext& context, const Strin
 
 void WebSocket::connect(const String& url, ExceptionCode& ec)
 {
+    printf("connect4\n");
     Vector<String> protocols;
     connect(url, protocols, ec);
 }
 
 void WebSocket::connect(const String& url, const String& protocol, ExceptionCode& ec)
 {
+    printf("connect3\n");
     Vector<String> protocols;
     protocols.append(protocol);
     connect(url, protocols, ec);
@@ -222,6 +234,7 @@ void WebSocket::connect(const String& url, const String& protocol, ExceptionCode
 
 void WebSocket::connect(const String& url, const Vector<String>& protocols, ExceptionCode& ec)
 {
+    printf("connect2\n");
     LOG(Network, "WebSocket %p connect() url='%s'", this, url.utf8().data());
     m_url = URL(URL(), url);
 
@@ -319,6 +332,7 @@ bool WebSocket::isValidURL(const String& url, const Vector<String>& protocols, E
 
 void WebSocket::connect()
 {
+    printf("connect1\n");
     m_channel = ThreadableWebSocketChannel::create(scriptExecutionContext(), this);
 
     m_channel->connect(m_url, m_protocolString);
@@ -333,6 +347,8 @@ void WebSocket::rejectConnect()
 
 void WebSocket::requestPermission()
 {
+    ppp=ContextDestructionObserver::scriptExecutionContext_nc();
+    printf("ppp:%p",ppp);
     Page* page = this->page();
     if (!page)
         return;
@@ -343,6 +359,7 @@ void WebSocket::requestPermission()
 
 void WebSocket::send(const String& message, ExceptionCode& ec)
 {
+    printf("send1!\n");
     LOG(Network, "WebSocket %p send() Sending String '%s'", this, message.utf8().data());
     if (m_state == CONNECTING) {
         ec = INVALID_STATE_ERR;
@@ -366,6 +383,7 @@ void WebSocket::send(const String& message, ExceptionCode& ec)
 
 void WebSocket::send(ArrayBuffer* binaryData, ExceptionCode& ec)
 {
+    printf("send2!\n");
     LOG(Network, "WebSocket %p send() Sending ArrayBuffer %p", this, binaryData);
     ASSERT(binaryData);
     if (m_state == CONNECTING) {
@@ -384,6 +402,7 @@ void WebSocket::send(ArrayBuffer* binaryData, ExceptionCode& ec)
 
 void WebSocket::send(ArrayBufferView* arrayBufferView, ExceptionCode& ec)
 {
+    printf("send3!\n");
     LOG(Network, "WebSocket %p send() Sending ArrayBufferView %p", this, arrayBufferView);
     ASSERT(arrayBufferView);
     if (m_state == CONNECTING) {
@@ -403,6 +422,7 @@ void WebSocket::send(ArrayBufferView* arrayBufferView, ExceptionCode& ec)
 
 void WebSocket::send(Blob* binaryData, ExceptionCode& ec)
 {
+    printf("send4!\n");
     LOG(Network, "WebSocket %p send() Sending Blob '%s'", this, binaryData->url().stringCenterEllipsizedToLength().utf8().data());
     if (m_state == CONNECTING) {
         ec = INVALID_STATE_ERR;
@@ -506,11 +526,17 @@ EventTargetInterface WebSocket::eventTargetInterface() const
 
 ScriptExecutionContext* WebSocket::scriptExecutionContext() const
 {
-    return ActiveDOMObject::scriptExecutionContext();
+    return ContextDestructionObserver::scriptExecutionContext();  //not need ->then try downcast & gdb bt . but maybe superclass works this function.
 }
 
 Document* WebSocket::document() const
 {
+    printf("%p\n", scriptExecutionContext());
+    if(!(scriptExecutionContext()==ppp)){
+
+        printf("good bye!!! \n");
+        return nullptr;
+    }
     return downcast<Document>(scriptExecutionContext());
 }
 
@@ -556,6 +582,7 @@ void WebSocket::suspend(ReasonForSuspension reason)
 
 void WebSocket::resume()
 {
+    printf("resume!\n");
     if (m_channel)
         m_channel->resume();
     else if (!m_pendingEvents.isEmpty() && !m_resumeTimer.isActive()) {
@@ -598,6 +625,7 @@ const char* WebSocket::activeDOMObjectName() const
 
 void WebSocket::didConnect()
 {
+    printf("didconnect!\n");
     LOG(Network, "WebSocket %p didConnect()", this);
     if (m_state != CONNECTING) {
         didClose(0, ClosingHandshakeIncomplete, WebSocketChannel::CloseEventCodeAbnormalClosure, "");

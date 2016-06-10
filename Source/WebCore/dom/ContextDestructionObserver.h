@@ -40,6 +40,8 @@ public:
 
     ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext; }
 
+    ScriptExecutionContext* scriptExecutionContext_nc() { return m_scriptExecutionContext; }
+
 protected:
     WEBCORE_EXPORT virtual ~ContextDestructionObserver();
     void observeContext(ScriptExecutionContext*);

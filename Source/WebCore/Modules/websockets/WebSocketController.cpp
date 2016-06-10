@@ -80,10 +80,23 @@ void provideWebSocketTo(Page* page, WebSocketClient* client)
 
 void WebSocketController::receivePermissionDecision(WebSocket* websocket, bool allowed)
 {
+    printf("comm\n\n");
+
+    if(!websocket){
+        printf("here?");
+        return;
+    }
+    if(!websocket->document()){
+        printf("receivePermissionDecision_websocket->document()\n");
+        return;
+    }
+
     InspectorInstrumentation::didReceiveWebSocketPermissionResponse(websocket->document(), websocket->id(), allowed);
 
-    if (allowed)
+    if (allowed){
+        printf("what is \n");
         websocket->connect();
+    }
     else
         websocket->rejectConnect();
 }

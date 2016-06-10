@@ -871,13 +871,13 @@ void Connection::enqueueIncomingMessage(std::unique_ptr<MessageDecoder> incoming
 
     RefPtr<Connection> protectedThis(this);
     RunLoop::main().dispatch([protectedThis] {
-        protectedThis->dispatchOneMessage();
+        protectedThis->dispatchOneMessage();//1
     });
 }
 
 void Connection::dispatchMessage(MessageDecoder& decoder)
 {
-    m_client->didReceiveMessage(*this, decoder);
+    m_client->didReceiveMessage(*this, decoder);//4
 }
 
 void Connection::dispatchMessage(std::unique_ptr<MessageDecoder> message)
@@ -900,7 +900,7 @@ void Connection::dispatchMessage(std::unique_ptr<MessageDecoder> message)
     if (message->isSyncMessage())
         dispatchSyncMessage(*message);
     else
-        dispatchMessage(*message);
+        dispatchMessage(*message);//3
 
     m_didReceiveInvalidMessage |= message->isInvalid();
     m_inDispatchMessageCount--;
@@ -928,7 +928,7 @@ void Connection::dispatchOneMessage()
         message = m_incomingMessages.takeFirst();
     }
 
-    dispatchMessage(WTF::move(message));
+    dispatchMessage(WTF::move(message));//2
 }
 
 void Connection::wakeUpRunLoop()

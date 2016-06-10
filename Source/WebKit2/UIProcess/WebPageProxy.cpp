@@ -5340,6 +5340,9 @@ void WebPageProxy::requestWebSocketPermissionForFrame(uint64_t websocketID, uint
     if (m_uiClient->decidePolicyForWebSocketPermissionRequest(this, frame, origin.get(), request.get()))
     return;
 
+    if (m_pageClient.decidePolicyForWebSocketPermissionRequest(*frame, *origin, *request))
+        return;
+
     request->deny();
 }
 

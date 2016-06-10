@@ -31,6 +31,7 @@
 
 namespace WebCore {
 class WebSocket;
+class Page;
 }
 
 namespace WebKit {

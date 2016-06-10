@@ -90,6 +90,8 @@ public:
     void close(ExceptionCode& ec) { close(WebSocketChannel::CloseEventCodeNotSpecified, String(), ec); }
     void close(int code, ExceptionCode& ec) { close(code, String(), ec); }
 
+    Page* page() const;
+
     int id() const;
     const URL& url() const;
     State readyState() const;
@@ -135,8 +137,6 @@ private:
     bool isValidURL(const String& url, const Vector<String>& protocols, ExceptionCode&);
     void requestPermission();
 
-    Page* page() const;
-
     virtual void refEventTarget() override { ref(); }
     virtual void derefEventTarget() override { deref(); }
 
@@ -148,6 +148,8 @@ private:
     };
 
     RefPtr<ThreadableWebSocketChannel> m_channel;
+
+    ScriptExecutionContext* ppp; //add
 
     State m_state;
     URL m_url;

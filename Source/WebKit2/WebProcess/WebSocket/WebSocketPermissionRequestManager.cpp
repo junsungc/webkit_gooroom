@@ -22,7 +22,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
-
 #include "config.h"
 #include "WebSocketPermissionRequestManager.h"
 
@@ -39,19 +38,24 @@
 #include <WebCore/WebSocket.h>
 #include <WebCore/WebSocketController.h>
 
+
+#include "Page.h"
+
 using namespace WebCore;
 
 namespace WebKit {
 
 static uint64_t generateWebSocketID()
 {
-    static uint64_t uniqueWebSocketID = 1;
-    return uniqueWebSocketID++;
+    static uint64_t uniqueWebSocketID = 123;
+    uniqueWebSocketID+=5;
+    return uniqueWebSocketID;
 }
 
 WebSocketPermissionRequestManager::WebSocketPermissionRequestManager(WebPage* page)
     : m_page(page)
 {
+    printf("Iam requestManager\n");
 }
 
 void WebSocketPermissionRequestManager::startRequestForWebSocket(WebSocket* websocket)
@@ -66,11 +70,19 @@ void WebSocketPermissionRequestManager::startRequestForWebSocket(WebSocket* webs
 
     m_websocketToIDMap.set(websocket, websocketID);
     m_idToWebSocketMap.set(websocketID, websocket);
+    printf("str websocket : %p\n", websocket);
 
     WebFrame* webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);
 
-    SecurityOrigin* origin = frame->document()->securityOrigin();
+
+    //TODO 
+    printf("a");
+    websocket->document();
+    printf("b\n");
+
+
+    SecurityOrigin* origin = websocket->frame()->document()->securityOrigin();
 
     m_page->send(Messages::WebPageProxy::RequestWebSocketPermissionForFrame(websocketID, webFrame->frameID(), origin->databaseIdentifier()));
 }
@@ -83,11 +95,42 @@ void WebSocketPermissionRequestManager::cancelRequestForWebSocket(WebSocket* web
 
 void WebSocketPermissionRequestManager::didReceiveWebSocketPermissionDecision(uint64_t websocketID, bool allowed)
 {
+    printf("%d %d\n", websocketID, allowed);
+    if(!websocketID){
+        printf("websocketID");
+        return;
+    }
     WebSocket* websocket = m_idToWebSocketMap.take(websocketID);
+    printf("did websocket : %p\n", websocket);    
+
+    Page* page = websocket->page();
+    if (!page)
+        return;
+
+    
     if (!websocket)
         return;
     m_websocketToIDMap.remove(websocket);
+
+    if (!websocket)
+        return;
+    if(!websocket->document()){
+        printf("websocket->document()\n");
+        return;
+    }
+    if(!websocket->document()->page()){
+
+        printf("websocket->document()->page()\n");
+        return;
+    }
+    if(!WebSocketController::from(websocket->document()->page())){
+        printf("WebSocketController::from(websocket->document()->page())\n");
+        return;
+    }
+
+    //WebSocketController::from(page)->receivePermissionDecision(websocket, allowed);
     WebSocketController::from(websocket->document()->page())->receivePermissionDecision(websocket, allowed);
+    printf("complete! \n");
 }
 
 } // namespace WebKit
